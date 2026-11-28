@@ -842,18 +842,32 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       const item = catalog[num - 1];
       if (item && item.id > BASE_STYLES) {
         const c = item.code;
+        const extOrigin = `${FALLBACK_ORIGIN}new-${c}.webp`;
+        if (extraRepoPattern === 'external') {
+          return [makeWsrvUrl(extOrigin, highRes), extOrigin];
+        }
         const primaryFile = getExtraFileName(c, extraRepoPattern);
         const primaryOrigin = `${REPO_IMAGE_ORIGIN}${primaryFile}`;
-        const otherPatterns = ['new', 'plain', 'zheng'].filter(p => p !== extraRepoPattern);
-        const urls = [makeWsrvUrl(primaryOrigin, highRes), `./images/${primaryFile}`, primaryOrigin];
-        otherPatterns.forEach(p => {
-          const f = getExtraFileName(c, p);
-          urls.push(makeWsrvUrl(`${REPO_IMAGE_ORIGIN}${f}`, highRes), `./images/${f}`);
+        const urls = [makeWsrvUrl(primaryOrigin, highRes), `./images/${primaryFile}`, extOrigin];
+        ['new', 'plain', 'zheng'].forEach(p => {
+          if (p !== extraRepoPattern) urls.push(`./images/${getExtraFileName(c, p)}`);
         });
-        const extOrigin = `${FALLBACK_ORIGIN}new-${c}.webp`;
-        urls.push(makeWsrvUrl(extOrigin, highRes), extOrigin);
         return Array.from(new Set(urls));
       }
+      const primaryFile = getBaseFileName(num);
+      const primaryOrigin = `${REPO_IMAGE_ORIGIN}${primaryFile}`;
+      const n1 = String(num);
+      const n2 = String(num).padStart(2, '0');
+      const n3 = String(num).padStart(3, '0');
+      const urls = [makeWsrvUrl(primaryOrigin, highRes), `./images/${primaryFile}`, primaryOrigin];
+      if (num < 10) {
+        const altBase = ZERO_PAD2_IDS.has(num) ? n1 : n2;
+        const altFile = `${altBase}${FILE_SUFFIX_ENC}`;
+        urls.push(`./images/${altFile}`);
+      }
+      urls.push(`./images/${n1}.webp`, `./images/${n3}.webp`);
+      return Array.from(new Set(urls));
+    }
       const primaryFile = getBaseFileName(num);
       const primaryOrigin = `${REPO_IMAGE_ORIGIN}${primaryFile}`;
       const n1 = String(num);
@@ -879,14 +893,22 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
     }
 
-    window.__onCatalogImgLoad = function (imgEl) { imgEl.dataset.ok = '1'; };
+    const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+    window.__onCatalogImgLoad = function (imgEl) {
+      if (imgEl.id === 'modal-image' || (imgEl.dataset.loaded === '1' && !imgEl.src.startsWith('data:image/gif'))) {
+        imgEl.dataset.ok = '1';
+      }
+    };
 
     window.__onCatalogImgErr = function (imgEl, id) {
+      if (imgEl.id !== 'modal-image' && imgEl.dataset.loaded !== '1') return;
       const isHighRes = imgEl.id === 'modal-image';
       const candidates = getCandidateUrls(id, isHighRes);
       const nextStage = parseInt(imgEl.dataset.stage || '0', 10) + 1;
       if (nextStage < candidates.length) {
         imgEl.dataset.stage = String(nextStage);
+        imgEl.dataset.started = String(Date.now());
         imgEl.src = candidates[nextStage];
       } else {
         imgEl.onerror = null;
@@ -896,26 +918,43 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       }
     };
 
+    function startImgLoad(img) {
+      if (!img || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
+      const id = parseInt(img.dataset.pid, 10);
+      if (isNaN(id)) return;
+      const candidates = getCandidateUrls(id, img.id === 'modal-image');
+      img.dataset.loaded = '1';
+      img.dataset.stage = '0';
+      img.dataset.started = String(Date.now());
+      img.src = candidates[0];
+    }
+
     function recoverStalledImages() {
+      const now = Date.now();
       const imgs = document.querySelectorAll('img[data-pid]');
       imgs.forEach(img => {
         if (img.dataset.ok === '1') return;
         if (img.id === 'modal-image' && !detailsDialog.open) return;
-        const isBroken = img.complete && img.naturalWidth === 0;
         const rect = img.getBoundingClientRect();
         const nearViewport = rect.bottom >= -300 && rect.top <= window.innerHeight + 600;
-        const isStuck = !img.complete && nearViewport;
+        if (!nearViewport) return;
+        if (img.id !== 'modal-image' && img.dataset.loaded !== '1') {
+          startImgLoad(img);
+          return;
+        }
+        const isBroken = img.complete && img.naturalWidth === 0;
+        const started = parseInt(img.dataset.started || '0', 10);
+        const isStuck = !img.complete && started > 0 && (now - started > 2500);
         if (isBroken || isStuck) {
           const id = parseInt(img.dataset.pid, 10);
-          const isHighRes = img.id === 'modal-image';
-          const candidates = getCandidateUrls(id, isHighRes);
+          const candidates = getCandidateUrls(id, img.id === 'modal-image');
           const curStage = parseInt(img.dataset.stage || '0', 10);
-          const nextStage = isBroken ? (curStage + 1) % candidates.length : curStage;
+          const nextStage = (curStage + 1) % candidates.length;
           img.dataset.stage = String(nextStage);
+          img.dataset.started = String(now);
           const baseUrl = candidates[nextStage];
           if (!baseUrl || baseUrl.startsWith('data:')) return;
-          const sep = baseUrl.includes('?') ? '&' : '?';
-          img.src = baseUrl + sep + '_r=' + Date.now();
+          img.src = baseUrl;
         }
       });
     }
@@ -1190,13 +1229,32 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       return `<div class="card-stepper"><button type="button" data-action="dec" data-id="${id}" aria-label="Decrease quantity for ${code}" class="stepper-btn-dec">−</button><input type="number" min="0" max="9999" value="${qty}" data-action="input" data-id="${id}" aria-label="Quantity for ${code}" class="stepper-input" /><button type="button" data-action="inc" data-id="${id}" aria-label="Increase quantity for ${code}" class="stepper-btn-inc">+</button></div>`;
     }
 
+    const imgObserver = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
+      entries.forEach(entry => {
+        const img = entry.target;
+        if (!entry.isIntersecting) {
+          if (img.__loadTimer) { clearTimeout(img.__loadTimer); img.__loadTimer = null; }
+          return;
+        }
+        if (img.dataset.loaded === '1') {
+          imgObserver.unobserve(img);
+          return;
+        }
+        img.__loadTimer = setTimeout(() => {
+          img.__loadTimer = null;
+          startImgLoad(img);
+          imgObserver.unobserve(img);
+        }, 60);
+      });
+    }, { rootMargin: '400px 0px' }) : null;
+
     function buildCardHtml(item, globalIndex) {
       const isOos = isProductOutOfStock(item);
       const qty = isOos ? 0 : (selection[item.id] || 0);
       const isSelected = qty > 0;
-      const primaryUrl = getCandidateUrls(item.id, false)[0];
-      const isEager = globalIndex < 8;
-      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${primaryUrl}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-stage="0" referrerpolicy="no-referrer" decoding="async" loading="eager" ${isEager ? 'fetchpriority="high"' : ''} onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
+      const isInitial = globalIndex < 12;
+      const primaryUrl = isInitial ? getCandidateUrls(item.id, false)[0] : BLANK_GIF;
+      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${primaryUrl}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-stage="0" data-loaded="${isInitial ? '1' : '0'}" ${isInitial ? `data-started="${Date.now()}" fetchpriority="high"` : ''} referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
     }
 
     function appendNextBatch() {
@@ -1205,6 +1263,10 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       const startIdx = renderedCount;
       renderedCount += nextSlice.length;
       perfumesGrid.insertAdjacentHTML('beforeend', nextSlice.map((item, i) => buildCardHtml(item, startIdx + i)).join(''));
+      perfumesGrid.querySelectorAll('img[data-loaded="0"]').forEach(img => {
+        if (imgObserver) { imgObserver.observe(img); }
+        else { startImgLoad(img); }
+      });
     }
 
     function renderCatalogGrid() {
@@ -1409,6 +1471,15 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       if (!detailsDialog.open) { pushModalHistoryIfNeeded(); detailsDialog.showModal(); }
     }
 
+    function refreshExtraImages() {
+      perfumesGrid.querySelectorAll('img[data-pid]').forEach(img => {
+        const id = parseInt(img.dataset.pid, 10);
+        if (id <= BASE_STYLES || img.dataset.ok === '1' || img.dataset.loaded !== '1') return;
+        img.dataset.loaded = '0';
+        startImgLoad(img);
+      });
+    }
+
     function detectExtraRepoPattern() {
       const probes = [
         { pattern: 'new', url: './images/new-A20.webp' },
@@ -1416,6 +1487,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
         { pattern: 'zheng', url: './images/A20%E6%AD%A3.webp' }
       ];
       let detected = false;
+      let finished = 0;
       probes.forEach(p => {
         const img = new Image();
         img.onload = () => {
@@ -1423,13 +1495,27 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
             detected = true;
             if (extraRepoPattern !== p.pattern) {
               extraRepoPattern = p.pattern;
-              renderCatalogGrid();
+              refreshExtraImages();
             }
+          }
+        };
+        img.onerror = () => {
+          finished += 1;
+          if (!detected && finished === probes.length) {
+            extraRepoPattern = 'external';
+            refreshExtraImages();
           }
         };
         img.src = p.url;
       });
     }
+
+    let scrollRecoverTimer = null;
+    window.addEventListener('scroll', () => {
+      if (scrollRecoverTimer) clearTimeout(scrollRecoverTimer);
+      scrollRecoverTimer = setTimeout(recoverStalledImages, 900);
+    }, { passive: true });
+    setInterval(recoverStalledImages, 3000);
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
