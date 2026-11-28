@@ -5,18 +5,18 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0" />
   <meta name="referrer" content="no-referrer" />
   <title>WuHuo Factory · Perfume Catalog</title>
-  <meta name="description" content="Explore 359 designer & niche fragrances from WuHuo Factory. US warehouse, 2–5 business day delivery. Choose styles, set quantities, and copy your selection for wholesale pricing." />
+  <meta name="description" content="Explore designer & niche fragrances from WuHuo Factory. US warehouse, 2–5 business day delivery. Choose styles, set quantities, and copy your selection for wholesale pricing." />
 
   <!-- Open Graph / Social Share Preview -->
   <meta property="og:type" content="website" />
-  <meta property="og:url" content="https://wuhuo-factory.github.io/perfume-catalog/" />
-  <meta property="og:title" content="WuHuo Factory · Fragrance Wholesale Catalog (#01–B208)" />
-  <meta property="og:description" content="Explore 359 fragrances · US warehouse, 2–5 business day delivery. Choose styles, set quantities, and copy your selection for wholesale pricing." />
-  <meta property="og:image" content="https://wsrv.nl/?url=https%3A%2F%2Fwuhuo-factory.github.io%2Fperfume-catalog%2Fimages%2F1%25E6%25AD%25A3.webp&w=800&output=jpg" />
+  <meta property="og:url" content="https://wuhuo-factory.github.io/perfume-catalog-361style/" />
+  <meta property="og:title" content="WuHuo Factory · Fragrance Wholesale Catalog" />
+  <meta property="og:description" content="Explore 350+ fragrances · US warehouse, 2–5 business day delivery. Choose styles, set quantities, and copy your selection for wholesale pricing." />
+  <meta property="og:image" content="https://wsrv.nl/?url=https%3A%2F%2Fwuhuo-factory.github.io%2Fperfume-catalog-361style%2Fimages%2F1%25E6%25AD%25A3.webp&w=800&output=jpg" />
   <meta name="twitter:card" content="summary_large_image" />
 
   <link rel="icon" type="image/svg+xml" href="data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' viewBox='0 0 64 64'%3E%3Crect width='64' height='64' rx='14' fill='%23181512'/%3E%3Crect x='25' y='10' width='14' height='6' rx='2' fill='none' stroke='%23B89146' stroke-width='3.5'/%3E%3Cpath d='M28 16v5h8v-5' fill='none' stroke='%23B89146' stroke-width='3.5'/%3E%3Crect x='16' y='21' width='32' height='31' rx='6' fill='none' stroke='%23B89146' stroke-width='3.5'/%3E%3Crect x='23' y='30' width='18' height='13' rx='2.5' fill='none' stroke='%23B89146' stroke-width='3'/%3E%3C/svg%3E" />
-  <link rel="preconnect" href="https://wsrv.nl" crossorigin />
+  <link rel="preconnect" href="https://wsrv.nl" />
 
   <script>
     if ('scrollRestoration' in history) { history.scrollRestoration = 'manual'; }
@@ -45,6 +45,7 @@
     .search-box { position: relative; width: 100%; }
     .search-icon { position: absolute; left: 0.75rem; top: 50%; transform: translateY(-50%); color: var(--text-secondary); pointer-events: none; }
     #catalog-search { width: 100%; height: 2.15rem; padding: 0.375rem 2rem 0.375rem 2.25rem; border-radius: 9999px; background: #FFFFFF; border: 1px solid var(--border-subtle); font-size: 0.8125rem; color: var(--text-primary); outline: none; }
+    #catalog-search::-webkit-search-cancel-button { -webkit-appearance: none; appearance: none; }
     #catalog-search::placeholder { color: var(--text-muted); }
     #catalog-search:focus { border-color: var(--accent-gold); }
     #clear-search-btn { position: absolute; right: 0.5rem; top: 50%; transform: translateY(-50%); width: 1.25rem; height: 1.25rem; border-radius: 9999px; background: var(--bg-secondary); color: var(--text-secondary); font-size: 0.75rem; font-weight: 700; display: flex; align-items: center; justify-content: center; border: none; cursor: pointer; }
@@ -107,14 +108,20 @@
     @media (min-width: 768px) { #perfumes-grid { grid-template-columns: repeat(4, minmax(0, 1fr)); } }
     @media (min-width: 1024px) { #perfumes-grid { grid-template-columns: repeat(5, minmax(0, 1fr)); } }
     @media (min-width: 1280px) { #perfumes-grid { grid-template-columns: repeat(6, minmax(0, 1fr)); } }
-    article.perfume-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; height: 100%; box-shadow: var(--shadow-soft); position: relative; }
+    article.perfume-card { background: var(--bg-card); border: 1px solid var(--border-subtle); border-radius: 1rem; overflow: hidden; display: flex; flex-direction: column; height: 100%; box-shadow: var(--shadow-soft); position: relative; content-visibility: auto; contain-intrinsic-size: 260px 330px; }
     article.perfume-card.is-selected { border-color: var(--accent-gold); box-shadow: 0 12px 32px -8px rgba(184, 145, 70, 0.22); }
     .card-image-wrap { position: relative; width: 100%; aspect-ratio: 1 / 1; flex-shrink: 0; background: #F6F2EA; overflow: hidden; cursor: pointer; }
-    .card-image-wrap img { width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; }
+    .card-image-wrap::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #F3EDE2 25%, #FAF7F2 50%, #F3EDE2 75%); background-size: 200% 100%; animation: card-shimmer 1.35s infinite linear; }
+    .card-image-wrap.is-img-ready::before { display: none; animation: none; }
+    @keyframes card-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
+    .card-image-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: 0; transition: opacity 0.22s ease; }
+    .card-image-wrap.is-img-ready img { opacity: 1; }
     .style-code-badge { position: absolute; top: 0.45rem; left: 0.45rem; z-index: 2; background: rgba(24, 21, 18, 0.84); color: #FAF7F2; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.02em; padding: 0.2rem 0.48rem; border-radius: 6px; }
     .ml-badge { position: absolute; top: 0.45rem; right: 0.45rem; z-index: 2; background: var(--accent-gold-dark); color: #FFFFFF; font-size: 0.63rem; font-weight: 700; padding: 0.2rem 0.48rem; border-radius: 6px; max-width: calc(100% - 4.2rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
     @media (min-width: 640px) { .style-code-badge { top: 0.65rem; left: 0.65rem; font-size: 0.72rem; padding: 0.25rem 0.6rem; } .ml-badge { top: 0.65rem; right: 0.65rem; font-size: 0.7rem; padding: 0.25rem 0.6rem; max-width: calc(100% - 4.8rem); } }
     .selected-qty-pill { position: absolute; bottom: 0.65rem; right: 0.65rem; z-index: 2; background: var(--accent-gold); color: #FFFFFF; font-size: 0.72rem; font-weight: 700; padding: 0.22rem 0.55rem; border-radius: 9999px; box-shadow: 0 2px 10px rgba(184, 145, 70, 0.4); display: flex; align-items: center; gap: 0.25rem; }
+    .card-retry-btn { position: absolute; bottom: 0.5rem; left: 0.5rem; z-index: 3; background: rgba(24, 21, 18, 0.78); color: #FAF7F2; font-size: 11px; font-weight: 600; padding: 0.2rem 0.5rem; border-radius: 9999px; border: 1px solid rgba(184, 145, 70, 0.45); cursor: pointer; }
+    .card-retry-btn:hover { background: var(--text-primary); }
     .card-body { padding: 0.65rem 0.75rem; flex: 1; display: flex; flex-direction: column; justify-content: space-between; gap: 0.55rem; }
     @media (min-width: 640px) { .card-body { padding: 0.95rem; gap: 0.75rem; } }
     .card-info { cursor: pointer; }
@@ -167,9 +174,11 @@
     .details-grid { display: grid; grid-template-columns: 1fr; background: var(--bg-primary); }
     @media (min-width: 768px) { .details-grid { grid-template-columns: 7fr 5fr; } }
     .details-media { background: var(--bg-secondary); position: relative; display: flex; align-items: center; justify-content: center; min-height: 290px; overflow: hidden; }
-    #modal-image-scroll { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: manipulation; }
+    #modal-image-scroll { width: 100%; height: 300px; display: flex; align-items: center; justify-content: center; overflow: hidden; touch-action: manipulation; position: relative; }
     @media (min-width: 640px) { #modal-image-scroll { height: 400px; } }
-    #modal-image-scroll img { width: 100%; height: 100%; max-height: 460px; object-fit: contain; padding: 0.75rem; user-select: none; cursor: zoom-in; transition: width 0.2s ease, height 0.2s ease; }
+    .details-media.is-loading #modal-image-scroll::before { content: ""; position: absolute; inset: 0; background: linear-gradient(90deg, #EFE8DC 25%, #FAF7F2 50%, #EFE8DC 75%); background-size: 200% 100%; animation: card-shimmer 1.35s infinite linear; }
+    #modal-image-scroll img { position: relative; z-index: 1; width: 100%; height: 100%; max-height: 460px; object-fit: contain; padding: 0.75rem; user-select: none; cursor: zoom-in; transition: width 0.2s ease, height 0.2s ease, opacity 0.2s ease; }
+    .details-media.is-loading #modal-image-scroll img { opacity: 0; }
     .zoom-image-container.zoomed #modal-image-scroll { display: block; overflow: auto; -webkit-overflow-scrolling: touch; touch-action: pan-x pan-y; cursor: grab; }
     .zoom-image-container.zoomed #modal-image-scroll:active { cursor: grabbing; }
     .zoom-image-container.zoomed #modal-image-scroll img { width: 190%; height: 190%; max-width: none; max-height: none; object-fit: contain; cursor: zoom-out; }
@@ -247,12 +256,12 @@
           <svg class="search-icon" fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M21 21l-4.35-4.35M10.5 18a7.5 7.5 0 100-15 7.5 7.5 0 000 15z" />
           </svg>
-          <input type="search" id="catalog-search" placeholder="Search #01–#176, A20, B203 or brand..." aria-label="Search perfumes by style code or brand" />
+          <input type="search" id="catalog-search" placeholder="Search #01–#176, A20, B211 or brand..." aria-label="Search perfumes by style code or brand" />
           <button type="button" id="clear-search-btn" aria-label="Clear search" class="hidden">×</button>
         </div>
       </div>
       <div class="header-actions">
-        <span aria-live="polite" id="styles-count-badge">359 / 359 styles</span>
+        <span aria-live="polite" id="styles-count-badge">Loading styles...</span>
         <button type="button" id="open-selection-btn" aria-label="Open My Selection">
           <svg fill="none" stroke="currentColor" stroke-width="2" viewBox="0 0 24 24" aria-hidden="true">
             <path stroke-linecap="round" stroke-linejoin="round" d="M16 11V7a4 4 0 00-8 0v4M5 9h14l1 12H4L5 9z" />
@@ -275,7 +284,7 @@
           <span class="hero-trust-sep">|</span>
           <span class="hero-trust-highlight">2–5 Business Day Delivery</span>
           <span class="hero-trust-sep hero-trust-sep-last">|</span>
-          <span class="hero-trust-full">350+ Styles Ready</span>
+          <span class="hero-trust-full" id="hero-styles-ready">350+ Styles Ready</span>
         </div>
       </div>
     </section>
@@ -302,8 +311,8 @@
     <div id="empty-filter-state" class="hidden">
       <div class="empty-icon">#</div>
       <h3 class="empty-title">No matching fragrances found</h3>
-      <p class="empty-desc">Try searching another style code (#01, 012, A20) or selecting a different brand.</p>
-      <button type="button" id="empty-reset-btn">Show all 359 styles</button>
+      <p class="empty-desc">Try searching another style code (#01, 012, A20, B211) or selecting a different brand.</p>
+      <button type="button" id="empty-reset-btn">Show all styles</button>
     </div>
   </main>
 
@@ -338,7 +347,7 @@
       <div class="details-info">
         <div>
           <div class="details-top-row">
-            <span id="modal-position-indicator">Style #01 of 359</span>
+            <span id="modal-position-indicator">Style #01</span>
             <button type="button" id="close-details-btn" class="modal-close-btn" aria-label="Close details">×</button>
           </div>
           <div class="details-eyebrow">Brand House</div>
@@ -420,26 +429,44 @@
   (function () {
     'use strict';
 
-    const REPO_HOST_PATH = 'wuhuo-factory.github.io/perfume-catalog/images/';
-    const REPO_IMAGE_ORIGIN = `https://${REPO_HOST_PATH}`;
-    const FALLBACK_ORIGIN = 'https://perfume-catalog.akazhiyu.chatgpt.site/images/';
-    const FILE_SUFFIX_ENC = '%E6%AD%A3.webp';
-    const ZERO_PAD2_IDS = new Set([6]);
-    const BASE_STYLES = 176;
-    const BATCH_SIZE = 24;
-    const STORAGE_KEY_SELECTION = 'wuhuo_perfume_selection_176_v1';
-    const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
-
     // Permanently hidden IDs or codes, e.g. [89, 'B203']
     const HIDDEN_PRODUCT_IDS = [];
     // Temporarily out-of-stock IDs or codes (grayed out & moved to bottom), e.g. [14, 'A134', 'A139']
     const OUT_OF_STOCK_IDS = [];
 
+    const CURRENT_IMAGE_ORIGIN = (
+      window.location.protocol.startsWith('http') &&
+      !['localhost', '127.0.0.1'].includes(window.location.hostname)
+    )
+      ? new URL('./images/', window.location.href).href
+      : 'https://wuhuo-factory.github.io/perfume-catalog-361style/images/';
+    const FALLBACK_REPO_ORIGIN = 'https://wuhuo-factory.github.io/perfume-catalog/images/';
+    const FALLBACK_EXTERNAL_ORIGIN = 'https://perfume-catalog.akazhiyu.chatgpt.site/images/';
+    const FILE_SUFFIX_ENC = '%E6%AD%A3.webp';
+    const ZERO_PAD2_IDS = new Set([6]);
+    const BASE_STYLES = 176;
+    const BATCH_SIZE = 24;
+    const MAX_CONCURRENT_IMAGES = 6;
+    const STALL_TIMEOUT_MS = 10000;
+    const STORAGE_KEY_SELECTION_V1 = 'wuhuo_perfume_selection_176_v1';
+    const STORAGE_KEY_SELECTION_V2 = 'wuhuo_perfume_selection_by_code_v2';
+    const BLANK_GIF = 'data:image/gif;base64,R0lGODlhAQABAIAAAAAAAP///yH5BAEAAAAALAAAAAABAAEAAAIBRAA7';
+
+    // Legacy ID mapping for 352..359 before B210/B211 were moved after B208
+    const LEGACY_ID_352_TO_359 = ['B210', 'B211', 'B203', 'B204', 'B205', 'B206', 'B207', 'B208'];
+
     try { localStorage.removeItem('wuhuo_perfume_img_mode_v2'); } catch (e) {}
 
-    let extraRepoPattern = 'new';
     let currentFilteredList = [];
     let renderedCount = 0;
+    let activeImageLoads = 0;
+    let pendingImgQueue = [];
+    let gridRenderEpoch = 0;
+
+    // Auto circuit breaker for wsrv.nl if proxy fails while direct ./images/ works
+    let wsrvSuccessCount = 0;
+    let wsrvFailCount = 0;
+    let preferDirectOrigin = false;
 
     const EXACT_BRANDS_1_TO_176 = `Dior~Tom Ford~Chanel~Creed~Maison Francis Kurkdjian~Valentino~Yves Saint Laurent~Yves Saint Laurent~Versace~Carolina Herrera~Yves Saint Laurent~Valentino~Louis Vuitton~Paco Rabanne~Xerjoff~Jean Paul Gaultier~Dior~Louis Vuitton~Armani~Parfums de Marly~Carolina Herrera~Dior~Chanel~Gucci~Maison Francis Kurkdjian~Valentino~Armani~Initio~Creed~Yves Saint Laurent~Armani~Kilian~Parfums de Marly~Parfums de Marly~Prada~Creed~Louis Vuitton~Louis Vuitton~Tom Ford~Tom Ford~Carolina Herrera~Carolina Herrera~Valentino~Initio~Versace~Maison Francis Kurkdjian~Yves Saint Laurent~Versace~Gucci~Chanel~Creed~Dior~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Valentino~Valentino~Valentino~Valentino~Paco Rabanne~Armaf~Armaf~Armaf~Lancome~Chanel~Armani~Armani~Byredo~Tom Ford~Tom Ford~Tom Ford~Tom Ford~Tom Ford~Maison Francis Kurkdjian~Maison Francis Kurkdjian~Creed~Carolina Herrera~Gucci~Gucci~Burberry~Burberry~Dior~Dior~Azzaro~Viktor & Rolf~Dolce & Gabbana~Prada~Prada~Valentino~Valentino~Valentino~Valentino~Valentino~Valentino~Chanel~Chanel~Chanel~Chanel~Chanel~Azzaro~Yves Saint Laurent~Yves Saint Laurent~Yves Saint Laurent~Yves Saint Laurent~Louis Vuitton~Paco Rabanne~Paco Rabanne~Paco Rabanne~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Burberry~Dior~Le Labo~Burberry~Burberry~Dolce & Gabbana~Dolce & Gabbana~Dolce & Gabbana~Kayali~Kayali~Versace~Versace~Lancome~Ralph Lauren~Ralph Lauren~Hermes~Hugo Boss~Paco Rabanne~Creed~Victoria's Secret~Viktor & Rolf~Givenchy~Gucci~Jo Malone~Dior~Carolina Herrera~Initio~Bond No. 9~Initio~Chanel~Chanel~Armani~Jean Paul Gaultier~Initio~Tom Ford~Tom Ford~Gucci~Creed~Dior~Louis Vuitton~Creed~Maison Francis Kurkdjian~Chanel~Maison Francis Kurkdjian~Jimmy Choo~Jimmy Choo~Kayali~Kayali~Kayali~Kayali~Kayali~Kayali~Valentino~Valentino~Bond No. 9~Bond No. 9~Bond No. 9~Marc Jacobs~Marc Jacobs~Yves Saint Laurent~Louis Vuitton~Carolina Herrera~Gucci~Gucci`.split('~');
 
@@ -795,25 +822,39 @@ A267~Valentino~Hair & Body Mist Salty Pistachio~100ML
 A268~Chanel~Bleu de Chanel Parfum Gift Box~100ML
 A269~Armani~Power Of You~90ML
 A270~Kilian~Love Don't Be Shy EDP~50ML
-B210~Louis Vuitton~L'Immensité~100ML
-B211~Louis Vuitton~Attrape-Rêves~100ML
 B203~Chanel~Mini Perfume Set~12×7.5ML
 B204~Chanel~6 in 1 Gift Set~4×30ML + 2×10ML
 B205~Chanel~Mini Perfume Set~5×7.5ML
 B206~Le Labo~Discovery Set~4×30ML
 B207~Louis Vuitton~Eau de Parfum Gift Set~4×30ML
-B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
+B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML
+B210~Louis Vuitton~L'Immensité~100ML
+B211~Louis Vuitton~Attrape-Rêves~100ML`;
+
+    function formatStyleCode(num) {
+      return '#' + (num < 100 ? String(num).padStart(2, '0') : String(num));
+    }
+
+    let catalog = [];
+    let catalogById = new Map();
+    let catalogByCode = new Map();
+    let visibleCatalog = [];
 
     function matchesProductList(item, list) {
       for (let i = 0; i < list.length; i++) {
         const entry = list[i];
         if (typeof entry === 'number') {
-          if (item.id === entry) return true;
+          if (item.id <= BASE_STYLES && item.id === entry) return true;
         } else {
           const s = String(entry).trim().toUpperCase();
           if (!s) continue;
           if (item.code.toUpperCase() === s) return true;
-          if (item.id <= BASE_STYLES && !(/^0\d{2}$/.test(s)) && item.code.toUpperCase() === ('#' + s.replace(/^#/, '').padStart(2, '0'))) return true;
+          if (item.id <= BASE_STYLES && s.startsWith('#')) {
+            const numStr = s.slice(1).replace(/^0+/, '');
+            if (numStr && String(item.id) === numStr) return true;
+          } else if (item.id <= BASE_STYLES && /^\d{1,2}$/.test(s) && !catalogByCode.has(s)) {
+            if (String(item.id) === String(parseInt(s, 10))) return true;
+          }
         }
       }
       return false;
@@ -822,131 +863,6 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     function isProductHidden(item) { return matchesProductList(item, HIDDEN_PRODUCT_IDS); }
     function isProductOutOfStock(item) { return matchesProductList(item, OUT_OF_STOCK_IDS); }
 
-    function getBaseFileName(num) {
-      const base = ZERO_PAD2_IDS.has(num) ? String(num).padStart(2, '0') : String(num);
-      return `${base}${FILE_SUFFIX_ENC}`;
-    }
-
-    function getExtraFileName(code, pattern) {
-      if (pattern === 'plain') return `${code}.webp`;
-      if (pattern === 'zheng') return `${code}${FILE_SUFFIX_ENC}`;
-      return `new-${code}.webp`;
-    }
-
-    function makeWsrvUrl(originUrl, highRes) {
-      const width = highRes ? 800 : 300;
-      const quality = highRes ? 82 : 72;
-      return `https://wsrv.nl/?url=${encodeURIComponent(originUrl)}&w=${width}&q=${quality}&output=webp&maxage=31d`;
-    }
-
-    function getCandidateUrls(num, highRes = false) {
-      const item = catalog[num - 1];
-      if (item && item.id > BASE_STYLES) {
-        const c = item.code;
-        const extOrigin = `${FALLBACK_ORIGIN}new-${c}.webp`;
-        if (extraRepoPattern === 'external') {
-          return [makeWsrvUrl(extOrigin, highRes), extOrigin];
-        }
-        const primaryFile = getExtraFileName(c, extraRepoPattern);
-        const primaryOrigin = `${REPO_IMAGE_ORIGIN}${primaryFile}`;
-        const urls = [makeWsrvUrl(primaryOrigin, highRes), `./images/${primaryFile}`, extOrigin];
-        ['new', 'plain', 'zheng'].forEach(p => {
-          if (p !== extraRepoPattern) urls.push(`./images/${getExtraFileName(c, p)}`);
-        });
-        return Array.from(new Set(urls));
-      }
-      const primaryFile = getBaseFileName(num);
-      const primaryOrigin = `${REPO_IMAGE_ORIGIN}${primaryFile}`;
-      const n1 = String(num);
-      const n2 = String(num).padStart(2, '0');
-      const n3 = String(num).padStart(3, '0');
-      const urls = [makeWsrvUrl(primaryOrigin, highRes), `./images/${primaryFile}`, primaryOrigin];
-      if (num < 10) {
-        const altBase = ZERO_PAD2_IDS.has(num) ? n1 : n2;
-        const altFile = `${altBase}${FILE_SUFFIX_ENC}`;
-        urls.push(`./images/${altFile}`);
-      }
-      urls.push(`./images/${n1}.webp`, `./images/${n3}.webp`);
-      return Array.from(new Set(urls));
-    }
-
-    function formatStyleCode(num) {
-      return '#' + (num < 100 ? String(num).padStart(2, '0') : String(num));
-    }
-
-    function createFallbackSvgDataUri(code, brand) {
-      const safeBrand = (brand || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
-      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400"><rect width="400" height="400" fill="#F3EDE2"/><rect x="165" y="75" width="70" height="32" rx="6" fill="#B89146"/><rect x="180" y="107" width="40" height="18" fill="#8C6728"/><rect x="115" y="125" width="170" height="205" rx="18" fill="#FAF7F2" stroke="#D2C7B5" stroke-width="4"/><rect x="135" y="165" width="130" height="115" rx="8" fill="#FFFFFF" stroke="#B89146" stroke-width="1.5"/><text x="200" y="212" text-anchor="middle" font-family="Georgia, serif" font-size="26" font-weight="bold" fill="#181512">${code}</text><text x="200" y="242" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="600" fill="#8C6728">${safeBrand}</text></svg>`;
-      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
-    }
-
-    window.__onCatalogImgLoad = function (imgEl) {
-      if (imgEl.id === 'modal-image' || (imgEl.dataset.loaded === '1' && !imgEl.src.startsWith('data:image/gif'))) {
-        imgEl.dataset.ok = '1';
-      }
-    };
-
-    window.__onCatalogImgErr = function (imgEl, id) {
-      if (imgEl.id !== 'modal-image' && imgEl.dataset.loaded !== '1') return;
-      const isHighRes = imgEl.id === 'modal-image';
-      const candidates = getCandidateUrls(id, isHighRes);
-      const nextStage = parseInt(imgEl.dataset.stage || '0', 10) + 1;
-      if (nextStage < candidates.length) {
-        imgEl.dataset.stage = String(nextStage);
-        imgEl.dataset.started = String(Date.now());
-        imgEl.src = candidates[nextStage];
-      } else {
-        imgEl.onerror = null;
-        imgEl.dataset.ok = '1';
-        const item = catalog[id - 1];
-        imgEl.src = createFallbackSvgDataUri(item ? item.code : formatStyleCode(id), item ? item.brand : '');
-      }
-    };
-
-    function startImgLoad(img) {
-      if (!img || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
-      const id = parseInt(img.dataset.pid, 10);
-      if (isNaN(id)) return;
-      const candidates = getCandidateUrls(id, img.id === 'modal-image');
-      img.dataset.loaded = '1';
-      img.dataset.stage = '0';
-      img.dataset.started = String(Date.now());
-      img.src = candidates[0];
-    }
-
-    function recoverStalledImages() {
-      const now = Date.now();
-      const imgs = document.querySelectorAll('img[data-pid]');
-      imgs.forEach(img => {
-        if (img.dataset.ok === '1') return;
-        if (img.id === 'modal-image' && !detailsDialog.open) return;
-        const rect = img.getBoundingClientRect();
-        const nearViewport = rect.bottom >= -300 && rect.top <= window.innerHeight + 600;
-        if (!nearViewport) return;
-        if (img.id !== 'modal-image' && img.dataset.loaded !== '1') {
-          startImgLoad(img);
-          return;
-        }
-        const isBroken = img.complete && img.naturalWidth === 0;
-        const started = parseInt(img.dataset.started || '0', 10);
-        const isStuck = !img.complete && started > 0 && (now - started > 2500);
-        if (isBroken || isStuck) {
-          const id = parseInt(img.dataset.pid, 10);
-          const candidates = getCandidateUrls(id, img.id === 'modal-image');
-          const curStage = parseInt(img.dataset.stage || '0', 10);
-          const nextStage = (curStage + 1) % candidates.length;
-          img.dataset.stage = String(nextStage);
-          img.dataset.started = String(now);
-          const baseUrl = candidates[nextStage];
-          if (!baseUrl || baseUrl.startsWith('data:')) return;
-          img.src = baseUrl;
-        }
-      });
-    }
-
-    let catalog = [];
-    let visibleCatalog = [];
-    let TOTAL_STYLES = BASE_STYLES;
     function buildCatalog() {
       const baseItems = EXACT_BRANDS_1_TO_176.slice(0, BASE_STYLES).map((defaultBrand, idx) => {
         const id = idx + 1;
@@ -956,6 +872,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
         const title = detailParts[0] || `${defaultBrand} ${code}`;
         return {
           id,
+          orderIndex: idx,
           code,
           padded3,
           brand: defaultBrand,
@@ -970,8 +887,10 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
         const code = parts[0];
         const brand = parts[1];
         const note = parts[2];
+        const orderIndex = BASE_STYLES + idx;
         return {
-          id: BASE_STYLES + idx + 1,
+          id: orderIndex + 1,
+          orderIndex,
           code,
           padded3: code.toLowerCase(),
           brand,
@@ -982,31 +901,283 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       });
 
       catalog = baseItems.concat(extraItems);
-      TOTAL_STYLES = catalog.length;
+      catalogById = new Map();
+      catalogByCode = new Map();
+      catalog.forEach(item => {
+        catalogById.set(item.id, item);
+        catalogByCode.set(item.code, item);
+      });
       visibleCatalog = catalog.filter(item => !isProductHidden(item));
     }
 
     buildCatalog();
 
-    let selection = {};
-    try {
-      const savedSelection = localStorage.getItem(STORAGE_KEY_SELECTION);
-      if (savedSelection) {
-        const parsed = JSON.parse(savedSelection);
-        let cleaned = false;
-        Object.keys(parsed).forEach(k => {
-          const id = parseInt(k, 10);
-          const qty = parseInt(parsed[k], 10);
-          const item = catalog[id - 1];
-          if (item && qty > 0 && !isProductHidden(item) && !isProductOutOfStock(item)) {
-            selection[id] = qty;
-          } else if (item && (isProductHidden(item) || isProductOutOfStock(item))) {
-            cleaned = true;
-          }
-        });
-        if (cleaned) { localStorage.setItem(STORAGE_KEY_SELECTION, JSON.stringify(selection)); }
+    function getBaseFileName(num) {
+      const base = ZERO_PAD2_IDS.has(num) ? String(num).padStart(2, '0') : String(num);
+      return `${base}${FILE_SUFFIX_ENC}`;
+    }
+
+    function makeWsrvUrl(originUrl, highRes) {
+      const width = highRes ? 900 : 360;
+      const quality = highRes ? 82 : 75;
+      return `https://wsrv.nl/?url=${encodeURIComponent(originUrl)}&w=${width}&q=${quality}&output=webp&maxage=31d`;
+    }
+
+    function getCandidateUrls(num, highRes = false) {
+      const item = catalogById.get(num);
+      if (item && item.id > BASE_STYLES) {
+        const c = item.code;
+        const primaryFile = `${c}.webp`;
+        const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}`;
+        const localPrimary = `./images/${primaryFile}`;
+        const wsrvPrimary = makeWsrvUrl(primaryOrigin, highRes);
+        const urls = preferDirectOrigin
+          ? [localPrimary, wsrvPrimary]
+          : [wsrvPrimary, localPrimary];
+
+        urls.push(
+          `./images/new-${c}.webp`,
+          `./images/${c}${FILE_SUFFIX_ENC}`,
+          `${FALLBACK_REPO_ORIGIN}${primaryFile}`,
+          `${FALLBACK_REPO_ORIGIN}new-${c}.webp`,
+          `${FALLBACK_EXTERNAL_ORIGIN}new-${c}.webp`
+        );
+        return Array.from(new Set(urls));
       }
-    } catch (e) { selection = {}; }
+
+      const primaryFile = getBaseFileName(num);
+      const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}`;
+      const localPrimary = `./images/${primaryFile}`;
+      const wsrvPrimary = makeWsrvUrl(primaryOrigin, highRes);
+      const n1 = String(num);
+      const n2 = String(num).padStart(2, '0');
+      const n3 = String(num).padStart(3, '0');
+      const urls = preferDirectOrigin
+        ? [localPrimary, wsrvPrimary]
+        : [wsrvPrimary, localPrimary];
+
+      if (num < 10) {
+        const altBase = ZERO_PAD2_IDS.has(num) ? n1 : n2;
+        urls.push(`./images/${altBase}${FILE_SUFFIX_ENC}`);
+      }
+      urls.push(
+        `./images/${n1}.webp`,
+        `./images/${n2}.webp`,
+        `./images/${n3}.webp`,
+        `${FALLBACK_REPO_ORIGIN}${primaryFile}`
+      );
+      return Array.from(new Set(urls));
+    }
+
+    function createFallbackSvgDataUri(code, brand) {
+      const safeBrand = (brand || '').replace(/&/g, '&amp;').replace(/</g, '&lt;').replace(/>/g, '&gt;');
+      const svg = `<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 400 400" width="400" height="400"><rect width="400" height="400" fill="#F3EDE2"/><rect x="165" y="75" width="70" height="32" rx="6" fill="#B89146"/><rect x="180" y="107" width="40" height="18" fill="#8C6728"/><rect x="115" y="125" width="170" height="205" rx="18" fill="#FAF7F2" stroke="#D2C7B5" stroke-width="4"/><rect x="135" y="165" width="130" height="115" rx="8" fill="#FFFFFF" stroke="#B89146" stroke-width="1.5"/><text x="200" y="212" text-anchor="middle" font-family="Georgia, serif" font-size="26" font-weight="bold" fill="#181512">${code}</text><text x="200" y="242" text-anchor="middle" font-family="sans-serif" font-size="13" font-weight="600" fill="#8C6728">${safeBrand}</text></svg>`;
+      return 'data:image/svg+xml;utf8,' + encodeURIComponent(svg);
+    }
+
+    function finishGridImgSlot(imgEl) {
+      if (!imgEl || imgEl.dataset.gridImg !== '1') return;
+      if (imgEl.dataset.inflight === '1') {
+        imgEl.dataset.inflight = '0';
+        if (imgEl.dataset.epoch === String(gridRenderEpoch)) {
+          activeImageLoads = Math.max(0, activeImageLoads - 1);
+        }
+        pumpImgQueue();
+      }
+    }
+
+    function markWrapReady(imgEl) {
+      const wrap = imgEl.closest('.card-image-wrap');
+      if (wrap) wrap.classList.add('is-img-ready');
+      if (imgEl.id === 'modal-image') {
+        modalImageZoomWrap.classList.remove('is-loading');
+      }
+    }
+
+    function toggleCardRetryBtn(imgEl, show) {
+      const wrap = imgEl.closest('.card-image-wrap');
+      if (!wrap) return;
+      const pid = imgEl.dataset.pid;
+      let btn = wrap.querySelector('.card-retry-btn');
+      if (show) {
+        if (!btn) {
+          btn = document.createElement('button');
+          btn.type = 'button';
+          btn.className = 'card-retry-btn';
+          btn.dataset.retryImg = pid;
+          btn.textContent = '↻ Retry';
+          wrap.appendChild(btn);
+        }
+      } else if (btn) {
+        btn.remove();
+      }
+    }
+
+    window.__onCatalogImgLoad = function (imgEl) {
+      if (!imgEl || (imgEl.src && imgEl.src.startsWith('data:image/gif'))) return;
+      imgEl.dataset.ok = '1';
+      if (imgEl.dataset.wsrvFirst === '1') {
+        if (imgEl.dataset.stage === '0') {
+          wsrvSuccessCount += 1;
+        } else if (imgEl.dataset.stage === '1') {
+          wsrvFailCount += 1;
+          if (wsrvFailCount >= 4 && wsrvSuccessCount === 0) {
+            preferDirectOrigin = true;
+          }
+        }
+      }
+      markWrapReady(imgEl);
+      finishGridImgSlot(imgEl);
+    };
+
+    window.__onCatalogImgErr = function (imgEl, id) {
+      if (!imgEl) return;
+      if (imgEl.dataset.gridImg === '1' && imgEl.dataset.loaded !== '1') return;
+      const isHighRes = imgEl.id === 'modal-image';
+      const candidates = getCandidateUrls(id, isHighRes);
+      const nextStage = parseInt(imgEl.dataset.stage || '0', 10) + 1;
+      if (nextStage < candidates.length) {
+        imgEl.dataset.stage = String(nextStage);
+        imgEl.dataset.started = String(Date.now());
+        imgEl.src = candidates[nextStage];
+      } else {
+        imgEl.onerror = null;
+        imgEl.dataset.ok = '1';
+        imgEl.dataset.fallback = '1';
+        const item = catalogById.get(id);
+        imgEl.src = createFallbackSvgDataUri(item ? item.code : formatStyleCode(id), item ? item.brand : '');
+        markWrapReady(imgEl);
+        if (imgEl.dataset.gridImg === '1') toggleCardRetryBtn(imgEl, true);
+        finishGridImgSlot(imgEl);
+      }
+    };
+
+    function isNearViewport(el, margin = 450) {
+      if (!el || !el.isConnected) return false;
+      const rect = el.getBoundingClientRect();
+      return rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
+    }
+
+    function startGridImgLoad(img) {
+      if (!img || !img.isConnected || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
+      const id = parseInt(img.dataset.pid, 10);
+      if (isNaN(id)) return;
+      const candidates = getCandidateUrls(id, false);
+      img.dataset.loaded = '1';
+      img.dataset.inflight = '1';
+      img.dataset.epoch = String(gridRenderEpoch);
+      img.dataset.stage = '0';
+      img.dataset.fallback = '0';
+      img.dataset.wsrvFirst = candidates[0].includes('wsrv.nl') ? '1' : '0';
+      img.dataset.started = String(Date.now());
+      activeImageLoads += 1;
+      img.src = candidates[0];
+    }
+
+    function retryGridImg(img) {
+      if (!img || !img.isConnected) return;
+      const id = parseInt(img.dataset.pid, 10);
+      if (isNaN(id)) return;
+      const wrap = img.closest('.card-image-wrap');
+      if (wrap) wrap.classList.remove('is-img-ready');
+      toggleCardRetryBtn(img, false);
+      img.dataset.loaded = '0';
+      img.dataset.ok = '0';
+      img.dataset.fallback = '0';
+      img.onerror = function () { window.__onCatalogImgErr(img, id); };
+      enqueueGridImgLoad(img);
+    }
+
+    function enqueueGridImgLoad(img) {
+      if (!img || !img.isConnected || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
+      if (!pendingImgQueue.includes(img)) {
+        pendingImgQueue.push(img);
+      }
+      pumpImgQueue();
+    }
+
+    function pumpImgQueue() {
+      pendingImgQueue = pendingImgQueue.filter(img =>
+        img.isConnected && img.dataset.loaded !== '1' && isNearViewport(img, 650)
+      );
+      while (activeImageLoads < MAX_CONCURRENT_IMAGES && pendingImgQueue.length > 0) {
+        let bestIdx = 0;
+        for (let i = 0; i < pendingImgQueue.length; i++) {
+          if (isNearViewport(pendingImgQueue[i], 120)) { bestIdx = i; break; }
+        }
+        const img = pendingImgQueue.splice(bestIdx, 1)[0];
+        startGridImgLoad(img);
+      }
+    }
+
+    function recoverStalledImages() {
+      const now = Date.now();
+      const imgs = document.querySelectorAll('img[data-pid]');
+      imgs.forEach(img => {
+        if (img.dataset.ok === '1') return;
+        if (img.id === 'modal-image' && !detailsDialog.open) return;
+        if (img.classList.contains('drawer-item-thumb') && !selectionDialog.open) return;
+        if (img.dataset.gridImg === '1' && !isNearViewport(img, 450)) return;
+        if (img.dataset.gridImg === '1' && img.dataset.loaded !== '1') {
+          enqueueGridImgLoad(img);
+          return;
+        }
+        const isBroken = img.complete && img.naturalWidth === 0;
+        const started = parseInt(img.dataset.started || '0', 10);
+        const isStuck = !img.complete && started > 0 && (now - started > STALL_TIMEOUT_MS);
+        if (isBroken || isStuck) {
+          const id = parseInt(img.dataset.pid, 10);
+          window.__onCatalogImgErr(img, id);
+        }
+      });
+      pumpImgQueue();
+    }
+
+    // Load selection keyed by item.code (with lossless migration from legacy numeric v1)
+    let selection = {};
+    function loadSelectionFromStorage() {
+      const cleanByCode = {};
+      try {
+        const savedV2 = localStorage.getItem(STORAGE_KEY_SELECTION_V2);
+        if (savedV2) {
+          const parsedV2 = JSON.parse(savedV2);
+          Object.keys(parsedV2).forEach(code => {
+            const qty = parseInt(parsedV2[code], 10);
+            const item = catalogByCode.get(code);
+            if (item && qty > 0 && !isProductHidden(item) && !isProductOutOfStock(item)) {
+              cleanByCode[item.code] = qty;
+            }
+          });
+          selection = cleanByCode;
+          return;
+        }
+
+        const savedV1 = localStorage.getItem(STORAGE_KEY_SELECTION_V1);
+        if (savedV1) {
+          const parsedV1 = JSON.parse(savedV1);
+          Object.keys(parsedV1).forEach(k => {
+            const legacyId = parseInt(k, 10);
+            const qty = parseInt(parsedV1[k], 10);
+            if (!(qty > 0) || isNaN(legacyId)) return;
+            let mappedCode = null;
+            if (legacyId >= 1 && legacyId <= 351) {
+              const item = catalogById.get(legacyId);
+              if (item) mappedCode = item.code;
+            } else if (legacyId >= 352 && legacyId <= 359) {
+              mappedCode = LEGACY_ID_352_TO_359[legacyId - 352];
+            }
+            const resolved = mappedCode ? catalogByCode.get(mappedCode) : null;
+            if (resolved && !isProductHidden(resolved) && !isProductOutOfStock(resolved)) {
+              cleanByCode[resolved.code] = qty;
+            }
+          });
+          selection = cleanByCode;
+          localStorage.setItem(STORAGE_KEY_SELECTION_V2, JSON.stringify(selection));
+        }
+      } catch (e) { selection = {}; }
+    }
+
+    loadSelectionFromStorage();
 
     let activeBrand = 'All';
     let searchQuery = '';
@@ -1021,6 +1192,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     const brandPillsContainer = document.getElementById('brand-pills-container');
     const toggleSelectedOnlyBtn = document.getElementById('toggle-selected-only-btn');
     const stylesCountBadge = document.getElementById('styles-count-badge');
+    const heroStylesReady = document.getElementById('hero-styles-ready');
     const collectionLabel = document.getElementById('collection-label');
     const resetFiltersInlineBtn = document.getElementById('reset-filters-inline-btn');
     const emptyFilterState = document.getElementById('empty-filter-state');
@@ -1058,6 +1230,10 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     const statusToast = document.getElementById('status-toast');
     const statusToastText = document.getElementById('status-toast-text');
 
+    if (heroStylesReady) {
+      heroStylesReady.textContent = `${visibleCatalog.length} Styles Ready`;
+    }
+
     function pushModalHistoryIfNeeded() {
       if (!modalHistoryPushed) {
         try { history.pushState({ wuhuoModal: true }, ''); modalHistoryPushed = true; } catch (e) {}
@@ -1072,35 +1248,48 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     }
 
     function saveSelection() {
-      try { localStorage.setItem(STORAGE_KEY_SELECTION, JSON.stringify(selection)); } catch (e) {}
+      try { localStorage.setItem(STORAGE_KEY_SELECTION_V2, JSON.stringify(selection)); } catch (e) {}
+    }
+
+    function getSelectedItemsSorted() {
+      const items = [];
+      Object.keys(selection).forEach(code => {
+        const qty = selection[code];
+        const item = catalogByCode.get(code);
+        if (item && qty > 0 && !isProductHidden(item) && !isProductOutOfStock(item)) {
+          items.push(item);
+        }
+      });
+      items.sort((a, b) => a.orderIndex - b.orderIndex);
+      return items;
     }
 
     function getSelectionTotals() {
-      const ids = Object.keys(selection).map(Number).filter(id => {
-        const item = catalog[id - 1];
-        return item && selection[id] > 0 && !isProductHidden(item) && !isProductOutOfStock(item);
-      }).sort((a, b) => a - b);
-      const totalStyles = ids.length;
-      const totalItems = ids.reduce((acc, id) => acc + selection[id], 0);
-      return { ids, totalStyles, totalItems };
+      const items = getSelectedItemsSorted();
+      const totalStyles = items.length;
+      const totalItems = items.reduce((acc, item) => acc + selection[item.code], 0);
+      return { items, totalStyles, totalItems };
     }
 
     function buildQuoteText() {
-      const { ids, totalStyles, totalItems } = getSelectionTotals();
+      const { items, totalStyles, totalItems } = getSelectionTotals();
       if (totalStyles === 0) {
         return 'Hello WuHuo Factory, I would like to inquire about your perfume catalog.';
       }
       const lines = ['Hello WuHuo Factory, here is my fragrance selection for a quote:', ''];
       const TARGET_BRANDS = ['Louis Vuitton', 'Jean Paul Gaultier'];
       const brandTotals = {};
-      ids.forEach(id => {
-        const item = catalog[id - 1];
-        const qty = selection[id];
+      items.forEach(item => {
+        const qty = selection[item.code];
         const exportCode = item.code.startsWith('#') ? item.code.replace(/^#/, 'YYX-') : item.code;
         lines.push(`${exportCode} - ${item.title} × ${qty}`);
-        if (TARGET_BRANDS.includes(item.brand)) { brandTotals[item.brand] = (brandTotals[item.brand] || 0) + qty; }
+        if (TARGET_BRANDS.includes(item.brand)) {
+          brandTotals[item.brand] = (brandTotals[item.brand] || 0) + qty;
+        }
       });
-      const matchedBrands = TARGET_BRANDS.filter(brand => brandTotals[brand] > 0).sort((a, b) => brandTotals[b] - brandTotals[a]);
+      const matchedBrands = TARGET_BRANDS
+        .filter(brand => brandTotals[brand] > 0)
+        .sort((a, b) => brandTotals[b] - brandTotals[a]);
       lines.push('');
       lines.push(`Total: ${totalStyles} ${totalStyles === 1 ? 'style' : 'styles'}, ${totalItems} ${totalItems === 1 ? 'item' : 'items'}`);
       if (matchedBrands.length > 0) {
@@ -1135,7 +1324,11 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     }
 
     function showManualCopyFallback(text) {
-      if (!selectionDialog.open) { pushModalHistoryIfNeeded(); selectionDialog.showModal(); }
+      if (!selectionDialog.open) {
+        pushModalHistoryIfNeeded();
+        renderDrawerItems();
+        selectionDialog.showModal();
+      }
       manualCopyTextarea.value = text;
       manualCopyBox.classList.remove('hidden');
       setTimeout(() => {
@@ -1192,7 +1385,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       const q = searchQuery.trim().toLowerCase();
       const numericQuery = q.replace(/^#/, '').replace(/^yyx-/, '').replace(/^0+/, '');
       return visibleCatalog.filter(item => {
-        if (showSelectedOnly && !(selection[item.id] > 0)) return false;
+        if (showSelectedOnly && !(selection[item.code] > 0)) return false;
         if (activeBrand !== 'All' && item.brand !== activeBrand) return false;
         if (!q) return true;
         const codeLower = item.code.toLowerCase();
@@ -1204,7 +1397,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     }
 
     function getCardActionMarkup(id, code, qty) {
-      const item = catalog[id - 1];
+      const item = catalogById.get(id);
       if (item && isProductOutOfStock(item)) {
         return `<button type="button" disabled class="btn-oos-card"><span>Out of Stock</span></button>`;
       }
@@ -1227,35 +1420,55 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
         }
         img.__loadTimer = setTimeout(() => {
           img.__loadTimer = null;
-          startImgLoad(img);
+          enqueueGridImgLoad(img);
           imgObserver.unobserve(img);
-        }, 40);
+        }, 25);
       });
-    }, { rootMargin: '500px 0px' }) : null;
+    }, { rootMargin: '450px 0px' }) : null;
 
-    function buildCardHtml(item, globalIndex) {
+    function buildCardHtml(item) {
       const isOos = isProductOutOfStock(item);
-      const qty = isOos ? 0 : (selection[item.id] || 0);
+      const qty = isOos ? 0 : (selection[item.code] || 0);
       const isSelected = qty > 0;
-      const isInitial = globalIndex < 12;
-      const primaryUrl = isInitial ? getCandidateUrls(item.id, false)[0] : BLANK_GIF;
-      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${primaryUrl}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-stage="0" data-loaded="${isInitial ? '1' : '0'}" ${isInitial ? `data-started="${Date.now()}" fetchpriority="high"` : ''} referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
+      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${BLANK_GIF}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-grid-img="1" data-stage="0" data-loaded="0" referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
     }
 
     function appendNextBatch() {
       if (renderedCount >= currentFilteredList.length) return;
+      const prevCount = renderedCount;
       const nextSlice = currentFilteredList.slice(renderedCount, renderedCount + BATCH_SIZE);
-      const startIdx = renderedCount;
       renderedCount += nextSlice.length;
-      perfumesGrid.insertAdjacentHTML('beforeend', nextSlice.map((item, i) => buildCardHtml(item, startIdx + i)).join(''));
-      perfumesGrid.querySelectorAll('img[data-loaded="0"]').forEach(img => {
-        if (imgObserver) { imgObserver.observe(img); }
-        else { startImgLoad(img); }
+      perfumesGrid.insertAdjacentHTML('beforeend', nextSlice.map(item => buildCardHtml(item)).join(''));
+
+      const newImgs = perfumesGrid.querySelectorAll('img[data-grid-img="1"][data-loaded="0"]');
+      let idx = 0;
+      newImgs.forEach(img => {
+        // Immediately queue top-of-first-batch cards for fast LCP; observe the rest
+        if (prevCount === 0 && idx < MAX_CONCURRENT_IMAGES) {
+          img.setAttribute('fetchpriority', 'high');
+          enqueueGridImgLoad(img);
+        } else if (imgObserver) {
+          imgObserver.observe(img);
+        } else {
+          enqueueGridImgLoad(img);
+        }
+        idx += 1;
       });
+
+      if (renderedCount < currentFilteredList.length) {
+        requestAnimationFrame(() => {
+          if (loadMoreSentinel.getBoundingClientRect().top <= window.innerHeight + 650) {
+            appendNextBatch();
+          }
+        });
+      }
     }
 
     function renderCatalogGrid() {
       if (imgObserver) imgObserver.disconnect();
+      gridRenderEpoch += 1;
+      activeImageLoads = 0;
+      pendingImgQueue = [];
       currentFilteredList = getFilteredCatalog();
       renderedCount = 0;
       stylesCountBadge.textContent = `${currentFilteredList.length} / ${visibleCatalog.length} styles`;
@@ -1286,8 +1499,8 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       if (showSelectedOnly) { renderCatalogGrid(); return; }
       const card = perfumesGrid.querySelector(`article[data-product-id="${id}"]`);
       if (!card) return;
-      const item = catalog[id - 1];
-      const qty = selection[id] || 0;
+      const item = catalogById.get(id);
+      const qty = selection[item.code] || 0;
       const isSelected = qty > 0;
       card.classList.toggle('is-selected', isSelected);
       const pill = card.querySelector(`[data-card-pill="${id}"]`);
@@ -1296,8 +1509,37 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       if (actionWrap) { actionWrap.innerHTML = getCardActionMarkup(id, item.code, qty); }
     }
 
-    function updateSelectionSummaryUI() {
-      const { ids, totalStyles, totalItems } = getSelectionTotals();
+    function getBestCachedThumb(item) {
+      const cardImg = perfumesGrid.querySelector(`img[data-pid="${item.id}"]`);
+      if (cardImg && cardImg.dataset.ok === '1' && cardImg.dataset.fallback !== '1' && cardImg.complete && cardImg.naturalWidth > 0) {
+        const s = cardImg.currentSrc || cardImg.src;
+        if (s && !s.startsWith('data:')) return s;
+      }
+      return getCandidateUrls(item.id, false)[0];
+    }
+
+    function renderDrawerItems() {
+      const { items, totalStyles } = getSelectionTotals();
+      if (totalStyles === 0) {
+        selectionEmptyState.classList.remove('hidden');
+        selectionItemsList.classList.add('hidden');
+        selectionItemsList.innerHTML = '';
+        manualCopyBox.classList.add('hidden');
+        return;
+      }
+      selectionEmptyState.classList.add('hidden');
+      selectionItemsList.classList.remove('hidden');
+      const now = Date.now();
+      selectionItemsList.innerHTML = items.map(item => {
+        const qty = selection[item.code];
+        const thumbUrl = getBestCachedThumb(item);
+        const wsrvFirst = thumbUrl.includes('wsrv.nl') ? '1' : '0';
+        return `<div class="drawer-item-row" data-drawer-row="${item.id}"><div class="drawer-item-left" data-drawer-open-details="${item.id}"><img src="${thumbUrl}" alt="${item.code}" data-pid="${item.id}" data-loaded="1" data-stage="0" data-wsrv-first="${wsrvFirst}" data-started="${now}" referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" class="drawer-item-thumb" /><div class="drawer-item-meta"><div class="drawer-item-top"><span class="drawer-code-pill">${item.code}</span><span class="drawer-brand-name">${item.brand}</span></div><div class="drawer-item-note">${item.title}</div></div></div><div class="drawer-item-controls"><button type="button" data-drawer-action="dec" data-id="${item.id}" class="stepper-btn-dec" style="background:var(--bg-secondary);">−</button><input type="number" min="0" max="9999" value="${qty}" data-drawer-action="input" data-id="${item.id}" aria-label="Quantity for ${item.code}" class="drawer-qty-input" /><button type="button" data-drawer-action="inc" data-id="${item.id}" class="stepper-btn-inc">+</button><button type="button" data-drawer-action="remove" data-id="${item.id}" aria-label="Remove ${item.code}" class="drawer-remove-btn">×</button></div></div>`;
+      }).join('');
+    }
+
+    function updateSelectionSummaryUI(changedId) {
+      const { totalStyles, totalItems } = getSelectionTotals();
       headerSelectionCount.textContent = String(totalStyles);
       if (totalStyles > 0) {
         toggleSelectedOnlyBtn.classList.remove('hidden');
@@ -1320,32 +1562,38 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       drawerItemsTotal.textContent = `${totalItems} ${totalItems === 1 ? 'item' : 'items'} total`;
       clearAllSelectionBtn.classList.toggle('hidden', totalStyles === 0);
       if (!manualCopyBox.classList.contains('hidden')) { manualCopyTextarea.value = buildQuoteText(); }
-      if (totalStyles === 0) {
-        selectionEmptyState.classList.remove('hidden');
-        selectionItemsList.classList.add('hidden');
-        selectionItemsList.innerHTML = '';
-        manualCopyBox.classList.add('hidden');
-      } else {
-        selectionEmptyState.classList.add('hidden');
-        selectionItemsList.classList.remove('hidden');
-        selectionItemsList.innerHTML = ids.map(id => {
-          const item = catalog[id - 1];
-          const qty = selection[id];
-          const thumbUrl = getCandidateUrls(item.id, false)[0];
-          return `<div class="drawer-item-row"><div class="drawer-item-left" data-drawer-open-details="${item.id}"><img src="${thumbUrl}" alt="${item.code}" data-stage="0" referrerpolicy="no-referrer" decoding="async" loading="lazy" onerror="window.__onCatalogImgErr(this, ${item.id})" class="drawer-item-thumb" /><div class="drawer-item-meta"><div class="drawer-item-top"><span class="drawer-code-pill">${item.code}</span><span class="drawer-brand-name">${item.brand}</span></div><div class="drawer-item-note">${item.title}</div></div></div><div class="drawer-item-controls"><button type="button" data-drawer-action="dec" data-id="${item.id}" class="stepper-btn-dec" style="background:var(--bg-secondary);">−</button><input type="number" min="0" max="9999" value="${qty}" data-drawer-action="input" data-id="${item.id}" aria-label="Quantity for ${item.code}" class="drawer-qty-input" /><button type="button" data-drawer-action="inc" data-id="${item.id}" class="stepper-btn-inc">+</button><button type="button" data-drawer-action="remove" data-id="${item.id}" aria-label="Remove ${item.code}" class="drawer-remove-btn">×</button></div></div>`;
-        }).join('');
+
+      // Lazy update drawer DOM only when drawer is actually open (no background image thrashing!)
+      if (selectionDialog.open) {
+        if (changedId && totalStyles > 0) {
+          const row = selectionItemsList.querySelector(`[data-drawer-row="${changedId}"]`);
+          const item = catalogById.get(changedId);
+          const qty = item ? (selection[item.code] || 0) : 0;
+          if (row && qty > 0) {
+            const inp = row.querySelector('input[data-drawer-action="input"]');
+            if (inp && document.activeElement !== inp) inp.value = String(qty);
+            return;
+          }
+        }
+        renderDrawerItems();
       }
+    }
+
+    function openSelectionDrawer() {
+      pushModalHistoryIfNeeded();
+      renderDrawerItems();
+      selectionDialog.showModal();
     }
 
     function setProductQuantity(id, newQty) {
       const numericId = parseInt(id, 10);
-      const item = catalog[numericId - 1];
+      const item = catalogById.get(numericId);
       if (isNaN(numericId) || !item || isProductHidden(item) || isProductOutOfStock(item)) return;
       const clamped = Math.max(0, Math.min(9999, parseInt(newQty, 10) || 0));
-      if (clamped === 0) { delete selection[numericId]; } else { selection[numericId] = clamped; }
+      if (clamped === 0) { delete selection[item.code]; } else { selection[item.code] = clamped; }
       saveSelection();
       updateSingleCardDOM(numericId);
-      updateSelectionSummaryUI();
+      updateSelectionSummaryUI(numericId);
       if (detailsDialog.open && currentModalProductId === numericId) { modalQtyInput.value = String(clamped); }
     }
 
@@ -1369,7 +1617,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     const preloadedHighRes = new Set();
 
     function preloadHighRes(id) {
-      const item = catalog[id - 1];
+      const item = catalogById.get(id);
       if (!id || !item || preloadedHighRes.has(id) || isProductHidden(item)) return;
       preloadedHighRes.add(id);
       const img = new Image();
@@ -1379,10 +1627,10 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
 
     function openDetailsModal(id) {
       const numericId = parseInt(id, 10);
-      const item = catalog[numericId - 1];
+      const item = catalogById.get(numericId);
       if (isNaN(numericId) || !item || isProductHidden(item)) return;
       currentModalProductId = numericId;
-      const qty = selection[numericId] || 0;
+      const qty = selection[item.code] || 0;
       const { list, idx } = getModalNavList();
       modalImageZoomWrap.classList.remove('zoomed');
       modalCodeBadge.textContent = item.code;
@@ -1416,18 +1664,24 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       const token = ++modalLoadToken;
       const candidates = getCandidateUrls(numericId, true);
       const cardImg = perfumesGrid.querySelector(`img[data-pid="${numericId}"]`);
-      const rawCardSrc = (cardImg && cardImg.dataset.ok === '1' && cardImg.complete && cardImg.naturalWidth > 0) ? (cardImg.currentSrc || cardImg.src) : '';
+      const rawCardSrc = (cardImg && cardImg.dataset.ok === '1' && cardImg.dataset.fallback !== '1' && cardImg.complete && cardImg.naturalWidth > 0)
+        ? (cardImg.currentSrc || cardImg.src)
+        : '';
       const cachedThumb = rawCardSrc && !rawCardSrc.startsWith('data:') ? rawCardSrc : '';
       modalImage.dataset.pid = String(numericId);
       modalImage.dataset.stage = '0';
+      modalImage.dataset.loaded = '1';
+      modalImage.dataset.fallback = '0';
       modalImage.alt = `${item.code} ${item.title}`;
       modalQtyInput.value = String(isOos ? 0 : qty);
+
       if (cachedThumb) {
+        modalImageZoomWrap.classList.remove('is-loading');
         modalImage.onload = null;
         modalImage.onerror = null;
         modalImage.dataset.ok = '1';
         modalImage.src = cachedThumb;
-        if (cachedThumb.includes('w=300')) {
+        if (cachedThumb.includes('wsrv.nl') && cachedThumb.includes('w=360')) {
           let hiStage = 0;
           const hiImg = new Image();
           hiImg.referrerPolicy = 'no-referrer';
@@ -1444,13 +1698,21 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
           hiImg.src = candidates[0];
         }
       } else {
-        modalImage.removeAttribute('src');
+        modalImageZoomWrap.classList.add('is-loading');
         modalImage.dataset.ok = '0';
+        modalImage.dataset.wsrvFirst = candidates[0].includes('wsrv.nl') ? '1' : '0';
         modalImage.dataset.started = String(Date.now());
-        modalImage.onload = function () { window.__onCatalogImgLoad(modalImage); };
-        modalImage.onerror = function () { window.__onCatalogImgErr(modalImage, numericId); };
+        modalImage.onload = function () {
+          if (token !== modalLoadToken) return;
+          window.__onCatalogImgLoad(modalImage);
+        };
+        modalImage.onerror = function () {
+          if (token !== modalLoadToken) return;
+          window.__onCatalogImgErr(modalImage, numericId);
+        };
         modalImage.src = candidates[0];
       }
+
       if (list.length > 1) {
         preloadHighRes(list[(idx + 1) % list.length].id);
         preloadHighRes(list[(idx - 1 + list.length) % list.length].id);
@@ -1458,60 +1720,22 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       if (!detailsDialog.open) { pushModalHistoryIfNeeded(); detailsDialog.showModal(); }
     }
 
-    function refreshExtraImages() {
-      perfumesGrid.querySelectorAll('img[data-pid]').forEach(img => {
-        const id = parseInt(img.dataset.pid, 10);
-        if (id <= BASE_STYLES || img.dataset.ok === '1' || img.dataset.loaded !== '1') return;
-        img.dataset.loaded = '0';
-        startImgLoad(img);
-      });
-    }
-
-    function detectExtraRepoPattern() {
-      const probes = [
-        { pattern: 'new', url: './images/new-A20.webp' },
-        { pattern: 'plain', url: './images/A20.webp' },
-        { pattern: 'zheng', url: './images/A20%E6%AD%A3.webp' }
-      ];
-      let detected = false;
-      let finished = 0;
-      probes.forEach(p => {
-        const img = new Image();
-        img.onload = () => {
-          if (!detected && img.naturalWidth > 0) {
-            detected = true;
-            if (extraRepoPattern !== p.pattern) {
-              extraRepoPattern = p.pattern;
-              refreshExtraImages();
-            }
-          }
-        };
-        img.onerror = () => {
-          finished += 1;
-          if (!detected && finished === probes.length) {
-            extraRepoPattern = 'external';
-            refreshExtraImages();
-          }
-        };
-        img.src = p.url;
-      });
-    }
-
     let scrollRecoverTimer = null;
     window.addEventListener('scroll', () => {
+      pumpImgQueue();
       if (scrollRecoverTimer) clearTimeout(scrollRecoverTimer);
-      scrollRecoverTimer = setTimeout(recoverStalledImages, 900);
+      scrollRecoverTimer = setTimeout(recoverStalledImages, 1200);
     }, { passive: true });
-    setInterval(recoverStalledImages, 3000);
+    setInterval(recoverStalledImages, 4000);
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
         if (entries.some(e => e.isIntersecting)) appendNextBatch();
-      }, { rootMargin: '1200px' });
+      }, { rootMargin: '650px' });
       io.observe(loadMoreSentinel);
     } else {
       window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1400) appendNextBatch();
+        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) appendNextBatch();
       }, { passive: true });
     }
 
@@ -1562,18 +1786,30 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       window.scrollTo({ top: 0, behavior: 'auto' });
     });
 
-    perfumesGrid.addEventListener('pointerdown', (e) => {
-      const trigger = e.target.closest('[data-open-details]');
-      if (trigger) { preloadHighRes(parseInt(trigger.getAttribute('data-open-details'), 10)); }
-    }, { passive: true });
+    // Preload high-res ONLY on desktop hover (never on mobile touch-scroll pointerdown!)
+    if (window.matchMedia && window.matchMedia('(hover: hover)').matches) {
+      perfumesGrid.addEventListener('pointerenter', (e) => {
+        const trigger = e.target.closest('[data-open-details]');
+        if (trigger) preloadHighRes(parseInt(trigger.getAttribute('data-open-details'), 10));
+      }, { capture: true, passive: true });
+    }
 
     perfumesGrid.addEventListener('click', (e) => {
+      const retryBtn = e.target.closest('button[data-retry-img]');
+      if (retryBtn) {
+        e.stopPropagation();
+        const id = parseInt(retryBtn.getAttribute('data-retry-img'), 10);
+        const cardImg = perfumesGrid.querySelector(`img[data-pid="${id}"]`);
+        if (cardImg) retryGridImg(cardImg);
+        return;
+      }
       const actionBtn = e.target.closest('button[data-action]');
       if (actionBtn) {
         e.stopPropagation();
         const id = parseInt(actionBtn.getAttribute('data-id'), 10);
         const action = actionBtn.getAttribute('data-action');
-        const currentQty = selection[id] || 0;
+        const item = catalogById.get(id);
+        const currentQty = item ? (selection[item.code] || 0) : 0;
         if (action === 'add' || action === 'inc') setProductQuantity(id, currentQty + 1);
         else if (action === 'dec') setProductQuantity(id, currentQty - 1);
         return;
@@ -1677,20 +1913,27 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
 
     modalPrevBtn.addEventListener('click', () => navigateDetailsModal(-1));
     modalNextBtn.addEventListener('click', () => navigateDetailsModal(1));
-    document.getElementById('modal-dec-btn').addEventListener('click', () => setProductQuantity(currentModalProductId, (selection[currentModalProductId] || 0) - 1));
-    document.getElementById('modal-inc-btn').addEventListener('click', () => setProductQuantity(currentModalProductId, (selection[currentModalProductId] || 0) + 1));
+    document.getElementById('modal-dec-btn').addEventListener('click', () => {
+      const item = catalogById.get(currentModalProductId);
+      setProductQuantity(currentModalProductId, ((item && selection[item.code]) || 0) - 1);
+    });
+    document.getElementById('modal-inc-btn').addEventListener('click', () => {
+      const item = catalogById.get(currentModalProductId);
+      setProductQuantity(currentModalProductId, ((item && selection[item.code]) || 0) + 1);
+    });
     modalQtyInput.addEventListener('change', () => setProductQuantity(currentModalProductId, parseInt(modalQtyInput.value, 10) || 0));
     document.getElementById('modal-clear-item-btn').addEventListener('click', () => setProductQuantity(currentModalProductId, 0));
 
     document.querySelectorAll('.modal-quick-add').forEach(btn => {
       btn.addEventListener('click', () => {
         const delta = parseInt(btn.getAttribute('data-quick-add'), 10) || 1;
-        setProductQuantity(currentModalProductId, (selection[currentModalProductId] || 0) + delta);
+        const item = catalogById.get(currentModalProductId);
+        setProductQuantity(currentModalProductId, ((item && selection[item.code]) || 0) + delta);
       });
     });
 
     document.getElementById('modal-filter-by-brand-btn').addEventListener('click', () => {
-      const item = catalog[currentModalProductId - 1];
+      const item = catalogById.get(currentModalProductId);
       if (!item) return;
       activeBrand = item.brand;
       detailsDialog.close();
@@ -1700,8 +1943,7 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
 
     document.getElementById('modal-open-selection-btn').addEventListener('click', () => {
       detailsDialog.close();
-      pushModalHistoryIfNeeded();
-      selectionDialog.showModal();
+      openSelectionDrawer();
     });
 
     window.addEventListener('keydown', (e) => {
@@ -1711,8 +1953,8 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       }
     });
 
-    document.getElementById('open-selection-btn').addEventListener('click', () => { pushModalHistoryIfNeeded(); selectionDialog.showModal(); });
-    document.getElementById('floating-open-drawer-btn').addEventListener('click', () => { pushModalHistoryIfNeeded(); selectionDialog.showModal(); });
+    document.getElementById('open-selection-btn').addEventListener('click', openSelectionDrawer);
+    document.getElementById('floating-open-drawer-btn').addEventListener('click', openSelectionDrawer);
     document.getElementById('close-selection-btn').addEventListener('click', () => selectionDialog.close());
     selectionDialog.addEventListener('click', (e) => { if (e.target === selectionDialog) selectionDialog.close(); });
 
@@ -1729,7 +1971,8 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
       if (btn) {
         const id = parseInt(btn.getAttribute('data-id'), 10);
         const action = btn.getAttribute('data-drawer-action');
-        const current = selection[id] || 0;
+        const item = catalogById.get(id);
+        const current = item ? (selection[item.code] || 0) : 0;
         if (action === 'inc') setProductQuantity(id, current + 1);
         else if (action === 'dec') setProductQuantity(id, current - 1);
         else if (action === 'remove') setProductQuantity(id, 0);
@@ -1763,7 +2006,6 @@ B208~Yves Saint Laurent~4 in 1 Gift Set~4×30ML`;
     renderBrandPills();
     renderCatalogGrid();
     updateSelectionSummaryUI();
-    detectExtraRepoPattern();
     setTimeout(recoverStalledImages, 2000);
     window.scrollTo(0, 0);
   })();
