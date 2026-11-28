@@ -114,7 +114,7 @@
     .card-image-wrap::before { content: ""; position: absolute; inset: 0; z-index: 0; background: linear-gradient(90deg, #F3EDE2 25%, #FAF7F2 50%, #F3EDE2 75%); background-size: 200% 100%; animation: card-shimmer 1.35s infinite linear; }
     .card-image-wrap.is-img-ready::before { display: none; animation: none; }
     @keyframes card-shimmer { 0% { background-position: 200% 0; } 100% { background-position: -200% 0; } }
-    .card-image-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: 0; transition: opacity 0.22s ease; }
+    .card-image-wrap img { position: relative; z-index: 1; width: 100%; height: 100%; object-fit: cover; object-position: center; display: block; opacity: 0; transition: opacity 0.2s ease; }
     .card-image-wrap.is-img-ready img { opacity: 1; }
     .style-code-badge { position: absolute; top: 0.45rem; left: 0.45rem; z-index: 2; background: rgba(24, 21, 18, 0.84); color: #FAF7F2; font-size: 0.66rem; font-weight: 700; letter-spacing: 0.02em; padding: 0.2rem 0.48rem; border-radius: 6px; }
     .ml-badge { position: absolute; top: 0.45rem; right: 0.45rem; z-index: 2; background: var(--accent-gold-dark); color: #FFFFFF; font-size: 0.63rem; font-weight: 700; padding: 0.2rem 0.48rem; border-radius: 6px; max-width: calc(100% - 4.2rem); white-space: nowrap; overflow: hidden; text-overflow: ellipsis; }
@@ -445,8 +445,9 @@
     const FILE_SUFFIX_ENC = '%E6%AD%A3.webp';
     const ZERO_PAD2_IDS = new Set([6]);
     const BASE_STYLES = 176;
-    const BATCH_SIZE = 24;
-    const MAX_CONCURRENT_IMAGES = 6;
+    const BATCH_SIZE = 30;
+    const IDLE_BATCH_DELAY_MS = 45;
+    const MAX_CONCURRENT_IMAGES = 8;
     const STALL_TIMEOUT_MS = 10000;
     const STORAGE_KEY_SELECTION_V1 = 'wuhuo_perfume_selection_176_v1';
     const STORAGE_KEY_SELECTION_V2 = 'wuhuo_perfume_selection_by_code_v2';
@@ -462,10 +463,11 @@
     let activeImageLoads = 0;
     let pendingImgQueue = [];
     let gridRenderEpoch = 0;
+    let idleBatchTimer = null;
+    let scrollPumpRaf = 0;
 
-    // Auto circuit breaker for wsrv.nl if proxy fails while direct ./images/ works
-    let wsrvSuccessCount = 0;
-    let wsrvFailCount = 0;
+    // Auto circuit breaker for wsrv.nl if proxy fails/throttles while direct ./images/ works
+    let consecutiveWsrvFails = 0;
     let preferDirectOrigin = false;
 
     const EXACT_BRANDS_1_TO_176 = `Dior~Tom Ford~Chanel~Creed~Maison Francis Kurkdjian~Valentino~Yves Saint Laurent~Yves Saint Laurent~Versace~Carolina Herrera~Yves Saint Laurent~Valentino~Louis Vuitton~Paco Rabanne~Xerjoff~Jean Paul Gaultier~Dior~Louis Vuitton~Armani~Parfums de Marly~Carolina Herrera~Dior~Chanel~Gucci~Maison Francis Kurkdjian~Valentino~Armani~Initio~Creed~Yves Saint Laurent~Armani~Kilian~Parfums de Marly~Parfums de Marly~Prada~Creed~Louis Vuitton~Louis Vuitton~Tom Ford~Tom Ford~Carolina Herrera~Carolina Herrera~Valentino~Initio~Versace~Maison Francis Kurkdjian~Yves Saint Laurent~Versace~Gucci~Chanel~Creed~Dior~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Valentino~Valentino~Valentino~Valentino~Paco Rabanne~Armaf~Armaf~Armaf~Lancome~Chanel~Armani~Armani~Byredo~Tom Ford~Tom Ford~Tom Ford~Tom Ford~Tom Ford~Maison Francis Kurkdjian~Maison Francis Kurkdjian~Creed~Carolina Herrera~Gucci~Gucci~Burberry~Burberry~Dior~Dior~Azzaro~Viktor & Rolf~Dolce & Gabbana~Prada~Prada~Valentino~Valentino~Valentino~Valentino~Valentino~Valentino~Chanel~Chanel~Chanel~Chanel~Chanel~Azzaro~Yves Saint Laurent~Yves Saint Laurent~Yves Saint Laurent~Yves Saint Laurent~Louis Vuitton~Paco Rabanne~Paco Rabanne~Paco Rabanne~Jean Paul Gaultier~Jean Paul Gaultier~Jean Paul Gaultier~Burberry~Dior~Le Labo~Burberry~Burberry~Dolce & Gabbana~Dolce & Gabbana~Dolce & Gabbana~Kayali~Kayali~Versace~Versace~Lancome~Ralph Lauren~Ralph Lauren~Hermes~Hugo Boss~Paco Rabanne~Creed~Victoria's Secret~Viktor & Rolf~Givenchy~Gucci~Jo Malone~Dior~Carolina Herrera~Initio~Bond No. 9~Initio~Chanel~Chanel~Armani~Jean Paul Gaultier~Initio~Tom Ford~Tom Ford~Gucci~Creed~Dior~Louis Vuitton~Creed~Maison Francis Kurkdjian~Chanel~Maison Francis Kurkdjian~Jimmy Choo~Jimmy Choo~Kayali~Kayali~Kayali~Kayali~Kayali~Kayali~Valentino~Valentino~Bond No. 9~Bond No. 9~Bond No. 9~Marc Jacobs~Marc Jacobs~Yves Saint Laurent~Louis Vuitton~Carolina Herrera~Gucci~Gucci`.split('~');
@@ -918,8 +920,8 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
     }
 
     function makeWsrvUrl(originUrl, highRes) {
-      const width = highRes ? 900 : 360;
-      const quality = highRes ? 82 : 75;
+      const width = highRes ? 900 : 300;
+      const quality = highRes ? 82 : 72;
       return `https://wsrv.nl/?url=${encodeURIComponent(originUrl)}&w=${width}&q=${quality}&output=webp&maxage=31d`;
     }
 
@@ -1018,10 +1020,10 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       imgEl.dataset.ok = '1';
       if (imgEl.dataset.wsrvFirst === '1') {
         if (imgEl.dataset.stage === '0') {
-          wsrvSuccessCount += 1;
+          consecutiveWsrvFails = 0;
         } else if (imgEl.dataset.stage === '1') {
-          wsrvFailCount += 1;
-          if (wsrvFailCount >= 4 && wsrvSuccessCount === 0) {
+          consecutiveWsrvFails += 1;
+          if (consecutiveWsrvFails >= 6) {
             preferDirectOrigin = true;
           }
         }
@@ -1052,12 +1054,6 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       }
     };
 
-    function isNearViewport(el, margin = 450) {
-      if (!el || !el.isConnected) return false;
-      const rect = el.getBoundingClientRect();
-      return rect.bottom >= -margin && rect.top <= window.innerHeight + margin;
-    }
-
     function startGridImgLoad(img) {
       if (!img || !img.isConnected || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
       const id = parseInt(img.dataset.pid, 10);
@@ -1084,30 +1080,42 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       img.dataset.loaded = '0';
       img.dataset.ok = '0';
       img.dataset.fallback = '0';
+      img.dataset.queued = '1';
       img.onerror = function () { window.__onCatalogImgErr(img, id); };
-      enqueueGridImgLoad(img);
-    }
-
-    function enqueueGridImgLoad(img) {
-      if (!img || !img.isConnected || img.dataset.loaded === '1' || img.dataset.ok === '1') return;
-      if (!pendingImgQueue.includes(img)) {
-        pendingImgQueue.push(img);
-      }
+      pendingImgQueue.unshift(img);
       pumpImgQueue();
     }
 
+    // Priority scheduler: current viewport first -> near viewport -> continuous background preload of ALL styles
     function pumpImgQueue() {
-      pendingImgQueue = pendingImgQueue.filter(img =>
-        img.isConnected && img.dataset.loaded !== '1' && isNearViewport(img, 650)
-      );
-      while (activeImageLoads < MAX_CONCURRENT_IMAGES && pendingImgQueue.length > 0) {
-        let bestIdx = 0;
-        for (let i = 0; i < pendingImgQueue.length; i++) {
-          if (isNearViewport(pendingImgQueue[i], 120)) { bestIdx = i; break; }
+      if (activeImageLoads >= MAX_CONCURRENT_IMAGES || pendingImgQueue.length === 0) return;
+      pendingImgQueue = pendingImgQueue.filter(img => img.isConnected && img.dataset.loaded !== '1');
+      if (pendingImgQueue.length === 0) return;
+
+      const slotsNeeded = MAX_CONCURRENT_IMAGES - activeImageLoads;
+      const winH = window.innerHeight || 800;
+      const inView = [];
+      const nearView = [];
+      const background = [];
+
+      for (let i = 0; i < pendingImgQueue.length; i++) {
+        const img = pendingImgQueue[i];
+        const rect = img.getBoundingClientRect();
+        if (rect.bottom >= -180 && rect.top <= winH + 180) {
+          inView.push(img);
+          if (inView.length >= slotsNeeded) break;
+        } else if (rect.bottom >= -600 && rect.top <= winH + 900) {
+          if (inView.length + nearView.length < slotsNeeded) nearView.push(img);
+        } else {
+          if (inView.length + nearView.length + background.length < slotsNeeded) background.push(img);
         }
-        const img = pendingImgQueue.splice(bestIdx, 1)[0];
-        startGridImgLoad(img);
       }
+
+      const toStart = inView.concat(nearView, background).slice(0, slotsNeeded);
+      if (toStart.length === 0) return;
+      const startSet = new Set(toStart);
+      pendingImgQueue = pendingImgQueue.filter(img => !startSet.has(img));
+      toStart.forEach(img => startGridImgLoad(img));
     }
 
     function recoverStalledImages() {
@@ -1117,11 +1125,8 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
         if (img.dataset.ok === '1') return;
         if (img.id === 'modal-image' && !detailsDialog.open) return;
         if (img.classList.contains('drawer-item-thumb') && !selectionDialog.open) return;
-        if (img.dataset.gridImg === '1' && !isNearViewport(img, 450)) return;
-        if (img.dataset.gridImg === '1' && img.dataset.loaded !== '1') {
-          enqueueGridImgLoad(img);
-          return;
-        }
+        if (img.dataset.gridImg === '1' && img.dataset.loaded !== '1') return;
+
         const isBroken = img.complete && img.naturalWidth === 0;
         const started = parseInt(img.dataset.started || '0', 10);
         const isStuck = !img.complete && started > 0 && (now - started > STALL_TIMEOUT_MS);
@@ -1407,65 +1412,51 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       return `<div class="card-stepper"><button type="button" data-action="dec" data-id="${id}" aria-label="Decrease quantity for ${code}" class="stepper-btn-dec">−</button><input type="number" min="0" max="9999" value="${qty}" data-action="input" data-id="${id}" aria-label="Quantity for ${code}" class="stepper-input" /><button type="button" data-action="inc" data-id="${id}" aria-label="Increase quantity for ${code}" class="stepper-btn-inc">+</button></div>`;
     }
 
-    const imgObserver = ('IntersectionObserver' in window) ? new IntersectionObserver((entries) => {
-      entries.forEach(entry => {
-        const img = entry.target;
-        if (!entry.isIntersecting) {
-          if (img.__loadTimer) { clearTimeout(img.__loadTimer); img.__loadTimer = null; }
-          return;
-        }
-        if (img.dataset.loaded === '1') {
-          imgObserver.unobserve(img);
-          return;
-        }
-        img.__loadTimer = setTimeout(() => {
-          img.__loadTimer = null;
-          enqueueGridImgLoad(img);
-          imgObserver.unobserve(img);
-        }, 25);
-      });
-    }, { rootMargin: '450px 0px' }) : null;
-
     function buildCardHtml(item) {
       const isOos = isProductOutOfStock(item);
       const qty = isOos ? 0 : (selection[item.code] || 0);
       const isSelected = qty > 0;
-      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${BLANK_GIF}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-grid-img="1" data-stage="0" data-loaded="0" referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
+      return `<article class="perfume-card ${isSelected ? 'is-selected' : ''} ${isOos ? 'is-out-of-stock' : ''}" data-product-id="${item.id}"><div class="card-image-wrap" data-open-details="${item.id}"><span class="style-code-badge">${item.code}</span><span class="ml-badge">${item.volume}</span><span class="selected-qty-pill ${isSelected ? '' : 'hidden'}" data-card-pill="${item.id}">✓ ${qty}</span><img src="${BLANK_GIF}" alt="${item.code} ${item.title}" data-pid="${item.id}" data-grid-img="1" data-queued="0" data-stage="0" data-loaded="0" referrerpolicy="no-referrer" decoding="async" onload="window.__onCatalogImgLoad(this)" onerror="window.__onCatalogImgErr(this, ${item.id})" /></div><div class="card-body"><div class="card-info" data-open-details="${item.id}"><div class="card-brand">${item.brand.toUpperCase()}</div><div class="card-title">${item.title}</div></div><div data-card-action-wrap="${item.id}">${getCardActionMarkup(item.id, item.code, qty)}</div></div></article>`;
     }
 
-    function appendNextBatch() {
+    function scheduleNextIdleBatch() {
+      if (idleBatchTimer || renderedCount >= currentFilteredList.length) return;
+      idleBatchTimer = setTimeout(() => {
+        idleBatchTimer = null;
+        appendNextBatch(true);
+      }, IDLE_BATCH_DELAY_MS);
+    }
+
+    function appendNextBatch(scheduleMore = true) {
       if (renderedCount >= currentFilteredList.length) return;
       const prevCount = renderedCount;
       const nextSlice = currentFilteredList.slice(renderedCount, renderedCount + BATCH_SIZE);
       renderedCount += nextSlice.length;
       perfumesGrid.insertAdjacentHTML('beforeend', nextSlice.map(item => buildCardHtml(item)).join(''));
 
-      const newImgs = perfumesGrid.querySelectorAll('img[data-grid-img="1"][data-loaded="0"]');
+      const newImgs = perfumesGrid.querySelectorAll('img[data-grid-img="1"][data-queued="0"]');
       let idx = 0;
       newImgs.forEach(img => {
-        // Immediately queue top-of-first-batch cards for fast LCP; observe the rest
+        img.dataset.queued = '1';
         if (prevCount === 0 && idx < MAX_CONCURRENT_IMAGES) {
           img.setAttribute('fetchpriority', 'high');
-          enqueueGridImgLoad(img);
-        } else if (imgObserver) {
-          imgObserver.observe(img);
-        } else {
-          enqueueGridImgLoad(img);
         }
+        pendingImgQueue.push(img);
         idx += 1;
       });
+      pumpImgQueue();
 
-      if (renderedCount < currentFilteredList.length) {
-        requestAnimationFrame(() => {
-          if (loadMoreSentinel.getBoundingClientRect().top <= window.innerHeight + 650) {
-            appendNextBatch();
-          }
-        });
+      if (scheduleMore && renderedCount < currentFilteredList.length) {
+        if (loadMoreSentinel.getBoundingClientRect().top <= window.innerHeight + 800) {
+          requestAnimationFrame(() => appendNextBatch(true));
+        } else {
+          scheduleNextIdleBatch();
+        }
       }
     }
 
     function renderCatalogGrid() {
-      if (imgObserver) imgObserver.disconnect();
+      if (idleBatchTimer) { clearTimeout(idleBatchTimer); idleBatchTimer = null; }
       gridRenderEpoch += 1;
       activeImageLoads = 0;
       pendingImgQueue = [];
@@ -1492,7 +1483,7 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       }
       emptyFilterState.classList.add('hidden');
       perfumesGrid.innerHTML = '';
-      appendNextBatch();
+      appendNextBatch(true);
     }
 
     function updateSingleCardDOM(id) {
@@ -1563,7 +1554,6 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       clearAllSelectionBtn.classList.toggle('hidden', totalStyles === 0);
       if (!manualCopyBox.classList.contains('hidden')) { manualCopyTextarea.value = buildQuoteText(); }
 
-      // Lazy update drawer DOM only when drawer is actually open (no background image thrashing!)
       if (selectionDialog.open) {
         if (changedId && totalStyles > 0) {
           const row = selectionItemsList.querySelector(`[data-drawer-row="${changedId}"]`);
@@ -1681,7 +1671,7 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
         modalImage.onerror = null;
         modalImage.dataset.ok = '1';
         modalImage.src = cachedThumb;
-        if (cachedThumb.includes('wsrv.nl') && cachedThumb.includes('w=360')) {
+        if (cachedThumb.includes('wsrv.nl') && cachedThumb.includes('w=300')) {
           let hiStage = 0;
           const hiImg = new Image();
           hiImg.referrerPolicy = 'no-referrer';
@@ -1722,7 +1712,12 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
 
     let scrollRecoverTimer = null;
     window.addEventListener('scroll', () => {
-      pumpImgQueue();
+      if (!scrollPumpRaf) {
+        scrollPumpRaf = requestAnimationFrame(() => {
+          scrollPumpRaf = 0;
+          pumpImgQueue();
+        });
+      }
       if (scrollRecoverTimer) clearTimeout(scrollRecoverTimer);
       scrollRecoverTimer = setTimeout(recoverStalledImages, 1200);
     }, { passive: true });
@@ -1730,13 +1725,12 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
-        if (entries.some(e => e.isIntersecting)) appendNextBatch();
-      }, { rootMargin: '650px' });
+        if (entries.some(e => e.isIntersecting)) {
+          if (idleBatchTimer) { clearTimeout(idleBatchTimer); idleBatchTimer = null; }
+          appendNextBatch(true);
+        }
+      }, { rootMargin: '800px' });
       io.observe(loadMoreSentinel);
-    } else {
-      window.addEventListener('scroll', () => {
-        if (window.innerHeight + window.scrollY >= document.body.offsetHeight - 1000) appendNextBatch();
-      }, { passive: true });
     }
 
     brandPillsContainer.addEventListener('click', (e) => {
