@@ -59,22 +59,22 @@
     @media (min-width: 1024px) { .header-inner { padding: 0.875rem 2rem; } }
 
     /* Main & Hero */
-    main { flex: 1; max-width: 80rem; width: 100%; margin: 0 auto; padding: 0.85rem 0.875rem 5rem; min-height: 75vh; }
-    @media (min-width: 640px) { main { padding: 2rem 1.5rem 6rem; } }
-    @media (min-width: 1024px) { main { padding: 2rem 2rem 6rem; } }
-    .hero-section { max-width: 54rem; margin: 0 auto 0.9rem; }
-    .hero-banner { text-align: center; background-color: #181512; background-image: radial-gradient(circle at 50% -15%, rgba(184, 145, 70, 0.24) 0%, transparent 62%), radial-gradient(circle at 85% 110%, rgba(140, 103, 40, 0.14) 0%, transparent 50%); border: 1px solid rgba(184, 145, 70, 0.4); border-radius: 0.875rem; padding: 0.95rem 0.875rem 0.75rem; box-shadow: 0 14px 34px -16px rgba(24, 21, 18, 0.42); }
+    main { flex: 1; max-width: 80rem; width: 100%; margin: 0 auto; padding: 0.9rem 0.875rem 5rem; min-height: 75vh; }
+    @media (min-width: 640px) { main { padding: 1.5rem 1.5rem 6rem; } }
+    @media (min-width: 1024px) { main { padding: 1.75rem 2rem 6rem; } }
+    .hero-section { width: 100%; margin: 0; background-color: #181512; background-image: radial-gradient(circle at 50% -15%, rgba(184, 145, 70, 0.24) 0%, transparent 62%), radial-gradient(circle at 85% 110%, rgba(140, 103, 40, 0.14) 0%, transparent 50%); border-bottom: 1px solid rgba(184, 145, 70, 0.42); box-shadow: 0 12px 30px -16px rgba(24, 21, 18, 0.35); }
+    .hero-banner { max-width: 54rem; margin: 0 auto; text-align: center; padding: 1rem 1rem 0.8rem; }
     .hero-eyebrow { font-size: 0.625rem; font-weight: 600; text-transform: uppercase; letter-spacing: 0.26em; color: #D8B468; margin-bottom: 0.25rem; }
-    .hero-title { font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.12rem, 5.2vw, 1.5rem); line-height: 1.15; letter-spacing: -0.01em; color: #FAF7F2; margin: 0 0 0.35rem; white-space: nowrap; }
-    .hero-desc { font-size: 0.75rem; color: #C8BEB3; line-height: 1.45; max-width: 21rem; margin: 0 auto 0.7rem; }
-    .hero-trust-strip { border-top: 1px solid rgba(184, 145, 70, 0.25); padding-top: 0.6rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem 0.55rem; font-size: 0.7rem; font-weight: 500; color: #EAE2D6; }
+    .hero-title { font-family: var(--font-serif); font-weight: 400; font-size: clamp(1.18rem, 5.4vw, 1.55rem); line-height: 1.15; letter-spacing: -0.01em; color: #FAF7F2; margin: 0 0 0.35rem; white-space: nowrap; }
+    .hero-desc { font-size: 0.76rem; color: #C8BEB3; line-height: 1.45; max-width: 24rem; margin: 0 auto 0.75rem; }
+    .hero-trust-strip { border-top: 1px solid rgba(184, 145, 70, 0.25); padding-top: 0.6rem; display: flex; flex-wrap: wrap; align-items: center; justify-content: center; gap: 0.25rem 0.55rem; font-size: 0.72rem; font-weight: 500; color: #EAE2D6; }
     .hero-trust-dot { width: 0.4rem; height: 0.4rem; border-radius: 9999px; background: #D8B468; display: inline-block; margin-right: 0.35rem; vertical-align: middle; }
     .hero-trust-sep { color: rgba(184, 145, 70, 0.45); }
     .hero-trust-sep-last { display: none; }
     .hero-trust-full { flex-basis: 100%; }
     .hero-trust-highlight { color: #E6C782; font-weight: 600; }
     .hero-dot { width: 0.5rem; height: 0.5rem; border-radius: 9999px; background: var(--accent-gold); flex-shrink: 0; }
-    @media (min-width: 640px) { .hero-section { margin-bottom: 2rem; } .hero-banner { border-radius: 1rem; padding: 2rem 2rem 1.25rem; } .hero-eyebrow { font-size: 0.75rem; margin-bottom: 0.5rem; } .hero-title { font-size: 2.55rem; margin-bottom: 0.65rem; white-space: normal; } .hero-desc { font-size: 0.94rem; max-width: 32rem; margin-bottom: 1.25rem; } .hero-trust-strip { padding-top: 0.9rem; gap: 1.15rem; font-size: 0.8125rem; } .hero-trust-sep-last { display: inline; } .hero-trust-full { flex-basis: auto; } }
+    @media (min-width: 640px) { .hero-banner { padding: 2rem 2rem 1.3rem; } .hero-eyebrow { font-size: 0.75rem; margin-bottom: 0.5rem; } .hero-title { font-size: 2.55rem; margin-bottom: 0.65rem; white-space: normal; } .hero-desc { font-size: 0.94rem; max-width: 34rem; margin-bottom: 1.25rem; } .hero-trust-strip { padding-top: 0.9rem; gap: 1.15rem; font-size: 0.8125rem; } .hero-trust-sep-last { display: inline; } .hero-trust-full { flex-basis: auto; } }
 
     /* Brand Filter */
     .brand-nav { margin-bottom: 0.85rem; }
@@ -273,7 +273,6 @@
     </div>
   </header>
 
-  <main>
     <section class="hero-section">
       <div class="hero-banner">
         <div class="hero-eyebrow">WUHUO FACTORY</div>
@@ -287,8 +286,9 @@
           <span class="hero-trust-full" id="hero-styles-ready">350+ Styles Ready</span>
         </div>
       </div>
-    </section>
-
+  </section>
+  
+  <main>
     <nav aria-label="Filter by brand" class="brand-nav">
       <div class="brand-nav-header">
         <span class="brand-nav-label">Filter by Brand</span>
