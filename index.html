@@ -433,6 +433,12 @@
     const HIDDEN_PRODUCT_IDS = [];
     // Temporarily out-of-stock IDs or codes (grayed out & moved to bottom), e.g. [14, 'A134', 'A139']
     const OUT_OF_STOCK_IDS = [];
+    // Force refresh CDN & browser cache when replacing/renaming images, e.g. { 'A190': '2', 'A191': '2' }
+    const IMAGE_VERSION_MAP = {
+      'A189': '2',
+      'A190': '2',
+      'A191': '2'
+    };
 
     const CURRENT_IMAGE_ORIGIN = (
       window.location.protocol.startsWith('http') &&
@@ -447,7 +453,8 @@
     const BASE_STYLES = 176;
     const BATCH_SIZE = 30;
     const IDLE_BATCH_DELAY_MS = 45;
-    const MAX_CONCURRENT_IMAGES = 8;
+    const MAX_CONCURRENT_IMAGES = (window.innerWidth && window.innerWidth < 640) ? 6 : 8;
+    const WSRV_STALL_TIMEOUT_MS = 4500;
     const STALL_TIMEOUT_MS = 10000;
     const STORAGE_KEY_SELECTION_V1 = 'wuhuo_perfume_selection_176_v1';
     const STORAGE_KEY_SELECTION_V2 = 'wuhuo_perfume_selection_by_code_v2';
@@ -919,6 +926,12 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       return `${base}${FILE_SUFFIX_ENC}`;
     }
 
+    function getVersionSuffix(item) {
+      if (!item) return '';
+      const v = IMAGE_VERSION_MAP[item.code] || IMAGE_VERSION_MAP[String(item.id)];
+      return v ? `?v=${encodeURIComponent(v)}` : '';
+    }
+
     function makeWsrvUrl(originUrl, highRes) {
       const width = highRes ? 900 : 300;
       const quality = highRes ? 82 : 72;
@@ -927,29 +940,35 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
 
     function getCandidateUrls(num, highRes = false) {
       const item = catalogById.get(num);
+      const ver = getVersionSuffix(item);
+
       if (item && item.id > BASE_STYLES) {
         const c = item.code;
+        const cLower = c.toLowerCase();
         const primaryFile = `${c}.webp`;
-        const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}`;
-        const localPrimary = `./images/${primaryFile}`;
+        const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}${ver}`;
+        const localPrimary = `./images/${primaryFile}${ver}`;
         const wsrvPrimary = makeWsrvUrl(primaryOrigin, highRes);
         const urls = preferDirectOrigin
           ? [localPrimary, wsrvPrimary]
           : [wsrvPrimary, localPrimary];
 
         urls.push(
-          `./images/new-${c}.webp`,
-          `./images/${c}${FILE_SUFFIX_ENC}`,
-          `${FALLBACK_REPO_ORIGIN}${primaryFile}`,
-          `${FALLBACK_REPO_ORIGIN}new-${c}.webp`,
-          `${FALLBACK_EXTERNAL_ORIGIN}new-${c}.webp`
+          `./images/new-${c}.webp${ver}`,
+          `./images/${c}${FILE_SUFFIX_ENC}${ver}`,
+          `./images/${cLower}.webp${ver}`,
+          `./images/${c}.jpg${ver}`,
+          `./images/${c}.png${ver}`,
+          `${FALLBACK_REPO_ORIGIN}${primaryFile}${ver}`,
+          `${FALLBACK_REPO_ORIGIN}new-${c}.webp${ver}`,
+          `${FALLBACK_EXTERNAL_ORIGIN}new-${c}.webp${ver}`
         );
         return Array.from(new Set(urls));
       }
 
       const primaryFile = getBaseFileName(num);
-      const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}`;
-      const localPrimary = `./images/${primaryFile}`;
+      const primaryOrigin = `${CURRENT_IMAGE_ORIGIN}${primaryFile}${ver}`;
+      const localPrimary = `./images/${primaryFile}${ver}`;
       const wsrvPrimary = makeWsrvUrl(primaryOrigin, highRes);
       const n1 = String(num);
       const n2 = String(num).padStart(2, '0');
@@ -960,13 +979,14 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
 
       if (num < 10) {
         const altBase = ZERO_PAD2_IDS.has(num) ? n1 : n2;
-        urls.push(`./images/${altBase}${FILE_SUFFIX_ENC}`);
+        urls.push(`./images/${altBase}${FILE_SUFFIX_ENC}${ver}`);
       }
       urls.push(
-        `./images/${n1}.webp`,
-        `./images/${n2}.webp`,
-        `./images/${n3}.webp`,
-        `${FALLBACK_REPO_ORIGIN}${primaryFile}`
+        `./images/${n1}.webp${ver}`,
+        `./images/${n2}.webp${ver}`,
+        `./images/${n3}.webp${ver}`,
+        `./images/${n1}.jpg${ver}`,
+        `${FALLBACK_REPO_ORIGIN}${primaryFile}${ver}`
       );
       return Array.from(new Set(urls));
     }
@@ -1129,7 +1149,9 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
 
         const isBroken = img.complete && img.naturalWidth === 0;
         const started = parseInt(img.dataset.started || '0', 10);
-        const isStuck = !img.complete && started > 0 && (now - started > STALL_TIMEOUT_MS);
+        const curSrc = img.currentSrc || img.src || '';
+        const timeoutLimit = curSrc.includes('wsrv.nl') ? WSRV_STALL_TIMEOUT_MS : STALL_TIMEOUT_MS;
+        const isStuck = !img.complete && started > 0 && (now - started > timeoutLimit);
         if (isBroken || isStuck) {
           const id = parseInt(img.dataset.pid, 10);
           window.__onCatalogImgErr(img, id);
@@ -1518,6 +1540,7 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
         manualCopyBox.classList.add('hidden');
         return;
       }
+      selectionEmptyState.classList.remove('hidden');
       selectionEmptyState.classList.add('hidden');
       selectionItemsList.classList.remove('hidden');
       const now = Date.now();
@@ -1721,7 +1744,7 @@ B211~Louis Vuitton~Attrape-Rêves~100ML`;
       if (scrollRecoverTimer) clearTimeout(scrollRecoverTimer);
       scrollRecoverTimer = setTimeout(recoverStalledImages, 1200);
     }, { passive: true });
-    setInterval(recoverStalledImages, 4000);
+    setInterval(recoverStalledImages, 1500);
 
     if ('IntersectionObserver' in window) {
       const io = new IntersectionObserver((entries) => {
